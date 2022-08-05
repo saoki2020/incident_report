@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: ./docker/db
+    container_name: db_container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Tokyo
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./reportApiDb/conf/my.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ./reportApiDb/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    command: mysqld
+
+  api:
+    image: node:16
+    container_name: api_container
+    environment:
+      - TZ=Asia/Tokyo
+      - DEBUG=app:*
+    tty: true
+    ports:
+      - 3000:3000
+    volumes:
+      - ./reportApi:/api
+    working_dir: /api
+    command: >
+      bash -c 'npm install &&
+      npm start'
+
+volumes:
+  db_data:
