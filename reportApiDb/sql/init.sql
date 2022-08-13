@@ -13,12 +13,6 @@ DROP TABLE IF EXISTS MST_DEST;
 DROP TABLE IF EXISTS USER;
 DROP TABLE IF EXISTS REPORT;
 
-CREATE TABLE test (
-  id int NOT NULL AUTO_INCREMENT primary key,
-  name varchar(30),
-  description varchar(255)
-);
-
 CREATE TABLE MST_JOB (
   job_id tinyint NOT NULL AUTO_INCREMENT primary key,
   job_name varchar(255) NOT NULL
@@ -57,11 +51,12 @@ CREATE TABLE MST_DEST (
 CREATE TABLE USER (
   user_id smallint NOT NULL AUTO_INCREMENT primary key,
   name varchar(255) NOT NULL,
-  email varchar(255) NOT NULL,
+  email varchar(255) NOT NULL UNIQUE,
+  password varchar(255) NOT NULL,
   job_id tinyint NOT NULL,
   dept_id tinyint NOT NULL,
   isChief boolean NOT NULL,
-  isRegistration boolean NOT NULL,
+  isRegistration boolean NOT NULL DEFAULT 0,
   CONSTRAINT user_jobid_fk FOREIGN KEY (job_id) REFERENCES MST_JOB(job_id),
   CONSTRAINT user_deptid_fk FOREIGN KEY (dept_id) REFERENCES MST_DEPARTMENT(dept_id)
 );

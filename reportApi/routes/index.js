@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const masterRoute = require('./mastersRoute');
+const userRoute = require('./userRoute')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-module.exports = [router, masterRoute];
+module.exports = [router, masterRoute, userRoute];
