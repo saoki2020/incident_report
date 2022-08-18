@@ -11,7 +11,7 @@
               <v-text-field
                 prepend-icon="mdi-account-circle"
                 label="メールアドレス"
-                v-model="input_email"
+                v-model="email"
               />
               <v-text-field
                 v-bind:type="showPass ? 'text' : 'password'"
@@ -19,10 +19,10 @@
                 v-bind:append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off' "
                 @click:append="showPass = !showPass"
                 label="パスワード"
-                v-model="input_password"
+                v-model="password"
               />
               <v-card-actions>
-                <v-btn class="teal lighten-2" dark>ログイン</v-btn>
+                <v-btn class="teal lighten-2" dark @click="onSignIn">ログイン</v-btn>
               </v-card-actions>
             </v-form>
           </v-card-text>
@@ -32,17 +32,43 @@
         <p><router-link :to="{name:'SignUp'}">新規登録</router-link>はこちらから</p>
       </v-row>
     </v-container>
+    <MessageWindow v-if="getMessageWindowStatus" />
   </v-app>
 </template>
 
 <script>
+import MessageWindow from '../components/MessageWindow.vue'
+import { mapActions,mapGetters } from 'vuex'
+
 export default {
   name: "SignIn",
+  components: {
+    MessageWindow,
+  },
   data: () => ({
     showPass : false,
-    input_email: '',
-    input_password: ''
-  })
+    email: '',
+    password: ''
+  }),
+  computed: {
+    ...mapGetters(['getMessageWindowStatus']),
+  },
+  methods: {
+    ...mapActions(['axiosAuthentication','toggleMessageWindow']),
+    async onSignIn() {
+      try {
+        await this.axiosAuthentication({
+          email: this.email,
+          password: this.password
+        })
+        this.$router.push('/ReportList')
+      } catch (error) {
+        console.log('error on Signin')
+        console.log(error)
+        this.toggleMessageWindow(true)
+      }
+    },
+  },
 }
 </script>
 

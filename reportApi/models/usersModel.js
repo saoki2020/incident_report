@@ -40,10 +40,34 @@ module.exports = {
       })
     });
   },
-  async selectUser (userId) {
+  async selectUserById (userId) {
     console.log('selectUser working')
     const sql = 'select * from USER where user_id = ?';
     const params = [userId];
+    console.log(`params = ${params}`);
+    return new Promise((resolve, reject) => {
+      connection.query(sql, params, (error, result) => {
+        if (error) {
+          console.log('###error on selectUser###');
+          console.log(typeof(error));
+          for(const key in error) {
+            console.log(`${key}: ${error[key]}`)
+          }
+          reject(error);
+          return;
+        }
+        console.log('##success on selectUser##');
+        console.log(`result[0] = ${result[0]}`);
+        console.log(`result = ${result}`);
+        console.dir(result);
+        resolve(result[0]);
+      })
+    })
+  },
+  async selectUserByEmail (email) {
+    console.log('selectUserByEmail working')
+    const sql = 'select * from USER where email = ?';
+    const params = [email];
     console.log(`params = ${params}`);
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {

@@ -46,14 +46,19 @@
         <p><router-link :to="{name:'SignIn'}">ログイン</router-link>はこちらから</p>
       </v-row>
     </v-container>
+    <MessageWindow v-if="getMessageWindowStatus" v-bind:myEmail="email" />
   </v-app>
 </template>
 
 <script>
+import MessageWindow from '../components/MessageWindow.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: "SignUp",
+  components: {
+    MessageWindow,
+  },
   data: () => ({
     showPass: false,
     name: '',
@@ -64,10 +69,10 @@ export default {
     isChief: false,
   }),
   computed: {
-    ...mapGetters(['getJobs','getDepts']),
+    ...mapGetters(['getJobs','getDepts', 'getMessageWindowStatus']),
   },
   methods: {
-    ...mapActions(['axiosGetJobs','axiosGetDepts','axiosPostRegistration']),
+    ...mapActions(['axiosGetJobs','axiosGetDepts','axiosPostRegistration','toggleMessageWindow']),
     onSubmit() {
       this.axiosPostRegistration({
         name: this.name,
@@ -77,8 +82,7 @@ export default {
         department: this.department,
         isChief: this.isChief,
       })
-      this.$router.push('/Result')
-
+      this.toggleMessageWindow(true)
     },
   },
   created() {
