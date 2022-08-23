@@ -13,6 +13,7 @@ export default new Vuex.Store({
     details: [],
     mistakes: [],
     dests: [],
+    clinicalDepts: [],
     postResult: [],
     postError: [],
     messageWindowStatus: false,
@@ -24,11 +25,12 @@ export default new Vuex.Store({
   getters: {
     getJobs: state => state.jobs,
     getDepts: state => state.depts,
-    getScene: state =>  state.scenes,
+    getScenes: state =>  state.scenes,
     getContents: state => state.contents,
     getDetails: state => state.details,
     getMistakes: state => state.mistakes,
     getDests: state => state.dests,
+    getClinicalDepts: state => state.clinicalDepts,
     getResult: state => state.postResult,
     getError: state => state.postError,
     getMessageWindowStatus: state => state.messageWindowStatus,
@@ -45,6 +47,7 @@ export default new Vuex.Store({
     setDetails: (state, value) => state.details = value,
     setMistakes: (state, value) => state.mistakes = value,
     setDests: (state, value) => state.dests = value,
+    setClinicalDepts: (state, value) => state.clinicalDepts = value,
     setResult: (state, value) => state.postResult = value,
     setError: (state, value) => state.postError = value,
     setMessageWindowStatus: (state, value) => state.messageWindowStatus = value,
@@ -75,7 +78,7 @@ export default new Vuex.Store({
     },
     async axiosGetScenes({commit}) {
       const res =  await axios.get("http://localhost:3000/masters/scenes")
-      commit('setScene', res.data)
+      commit('setScenes', res.data)
     },
     async axiosGetContents({commit}) {
       const res =  await axios.get("http://localhost:3000/masters/contents")
@@ -93,11 +96,15 @@ export default new Vuex.Store({
       const res =  await axios.get("http://localhost:3000/masters/dests")
       commit('setDests', res.data)
     },
+    async axiosGetClinicalDepts({commit}) {
+      const res =  await axios.get("http://localhost:3000/masters/clinicalDepts")
+      commit('setClinicalDepts', res.data)
+    },
     async axiosPostRegistration({commit}, {name, email, password, job, department, isChief}) {
       try {
         const res = await axios.post("http://localhost:3000/user/registration", {name, email, password, job, department, isChief})
         commit('setResult', res.data)
-        commit('setPostStatus', 'SUCCESS')
+        commit('setPostStatus', 'REGISTRATION SUCCESS')
       } catch (error) {
         const errorData = error.response.data
         // バリデーションエラーの場合
@@ -142,6 +149,21 @@ export default new Vuex.Store({
     actionSetUserInfo({commit}, payload) {
       commit('setUserInfo', payload)
     },
+    async axiosPostReport({commit, getters}, postData) {
+      // console.log("post report")
+      // console.log(postData)
+      const postUser = getters.getUserInfo
+      // console.log(`postUser = ${postUser}`)
+      // console.dir(postUser)
+      try {
+        const res = await axios.post("http://localhost:3000/report/postNewReport",{ postData, postUser})
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosPostReport Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+      }
+    }
     // Promiseを使うバージョン
     // async axiosAuthentication({commit}, {email, password}) {
     //   await new Promise((resolve, reject) => {

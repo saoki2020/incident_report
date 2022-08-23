@@ -6,58 +6,57 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="8">
-          <!-- 報告者情報 -->
-          <v-card v-if="page==1">
-            <v-card-title class="teal lighten-3">
-              <span>報告者の情報を入力してください</span>
-            </v-card-title>
-            <v-card-text>
-              <v-form>
-                <v-row>
-                  <v-col cols="12">
-                    <v-text-field
-                    label="氏名"
-                    v-model="getUserInfo.name"
-                    readonly
-                    />
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                    v-if="getJobs.length"
-                    label="職種"
-                    v-model="getJobs[getUserInfo.job_id - 1].job_name"
-                    readonly
-                    />
-                  </v-col>
-                  <v-col cols="12">
-                      <v-text-field
-                      v-if="getDepts.length"
-                      label="所属"
-                      v-model="getDepts[getUserInfo.dept_id - 1].dept_name"
-                      readonly
-                      />
-                  </v-col>
-                  <v-col cols="6">
-                    <v-text-field
-                    label="職歴[年]"
-                    v-model="post.workYear"
-                    suffix="年"
-                    />
-                  </v-col>
-                  <v-col cols="6">
-                    <v-text-field
-                    label="職歴[月]"
-                    v-model="post.workMonth"
-                    suffix="ヶ月"
-                    />
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-card-text>
-            <v-card-actions class="justify-center">
-              <v-btn class="teal lighten-2" dark @click="nextForm">次へ</v-btn>
-            </v-card-actions>
-          </v-card>
+        <!-- コンポーネントを表示する -->
+        <!-- <keep-alive> -->
+          <ReportForm1 v-if="formNum===1"
+            :year.sync="post.workYear"
+            :month.sync="post.workMonth"
+            :rules="[rules.required]"
+            :ref="form1Valid"
+            />
+          <ReportForm2 v-if="formNum===2"
+            :name.sync="post.patientName"
+            :age.sync="post.patientAge"
+            :gender.sync="post.patientGender"
+            :department.sync="post.department"
+            :disease.sync="post.disease"
+            :date.sync="post.hospitalDate"
+            :doctor.sync="post.doctor"
+          />
+          <ReportForm3 v-if="formNum===3"
+            :iDate.sync="post.incidentDate"
+            :iTime.sync="post.incidentTime"
+            :scene.sync="post.selectedScene"
+            :content.sync="post.selectedContent"
+            :detail.sync="post.selectedDetail"
+            :mistake.sync="post.selectedMistake"
+            :risk.sync="post.selectedRisk"
+            :trust.sync="post.loseTrust"
+            :dest.sync="post.selectedDest"
+            :rDate.sync="post.reportDate"
+            :rTime.sync="post.reportTime"
+          />
+          <ReportForm4 v-if="formNum===4"
+            :situation.sync="post.incidentSituation"
+            :response.sync="post.incidentResponse"
+            :factor.sync="post.incidentFactor"
+            :prevention.sync="post.incidentPrevention"
+          />
+          <ReportConfirm v-if="formNum===5"
+            :postData="post"
+          />
+        <!-- </keep-alive> -->
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="1">
+          <v-btn v-if="1<formNum&&formNum<=5" color="teal" outlined @click="decreaseForm">戻る</v-btn>
+        </v-col>
+        <v-col cols="1">
+          <v-btn  v-if="formNum<4" class="teal lighten-2" dark @click="increaseForm">次へ</v-btn>
+        </v-col>
+        <v-col cols="1">
+          <v-btn  v-if="formNum===4" class="teal lighten-2" dark @click="increaseForm">提出する</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -66,31 +65,65 @@
 
 
 <script>
+import ReportForm1 from './forms/ReportForm1.vue'
+import ReportForm2 from './forms/ReportForm2.vue'
+import ReportForm3 from './forms/ReportForm3.vue'
+import ReportForm4 from './forms/ReportForm4.vue'
+import ReportConfirm from './forms/ReportConfirm.vue'
+
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: "PostReport",
+  components: {
+    ReportForm1,
+    ReportForm2,
+    ReportForm3,
+    ReportForm4,
+    ReportConfirm
+  },
   data() {
     return {
-      page: 1,
+      formNum: 1,
       post: {
         workYear: '',
         workMonth: '',
-      }
+        patientName: '',
+        patientAge: '',
+        patientGender: '',
+        department: '',
+        disease: '',
+        hospitalDate: '',
+        doctor:'',
+        incidentDate:'',
+        incidentTime:'',
+        selectedScene:'',
+        selectedContent:'',
+        selectedDetail:'',
+        selectedMistake:'',
+        selectedRisk:'',
+        loseTrust:'',
+        selectedDest: '',
+        reportDate:'',
+        reportTime:'',
+        incidentSituation: '',
+        incidentResponse: '',
+        incidentFactor: '',
+        incidentPrevention: ''
+      },
     }
   },
   computed: {
-    ...mapGetters(['getUserInfo', 'getJobs', 'getDepts'])
   },
   methods: {
-    ...mapActions(['axiosGetJobs','axiosGetDepts']),
-    nextForm() {
-      this.page++
+    increaseForm() {
+      this.formNum++
+      console.log(this.formNum)
+    },
+    decreaseForm() {
+      this.formNum--
+      console.log(this.formNum)
     },
   },
-  created() {
-    this.axiosGetJobs()
-    this.axiosGetDepts()
-  }
 }
 </script>
 

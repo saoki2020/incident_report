@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS MST_MISTAKE;
 DROP TABLE IF EXISTS MST_CONTENT;
 DROP TABLE IF EXISTS MST_DETAIL;
 DROP TABLE IF EXISTS MST_DEST;
+DROP TABLE IF EXISTS MST_CLINICAL_DEPT;
 DROP TABLE IF EXISTS USER;
 DROP TABLE IF EXISTS REPORT;
 
@@ -48,6 +49,11 @@ CREATE TABLE MST_DEST (
   dest varchar(255) NOT NULL
 );
 
+CREATE TABLE MST_CLINICAL_DEPT (
+  clinical_dept_id tinyint NOT NULL AUTO_INCREMENT primary key,
+  clinical_dept_name varchar(255) NOT NULL
+);
+
 CREATE TABLE USER (
   user_id smallint NOT NULL AUTO_INCREMENT primary key,
   name varchar(255) NOT NULL,
@@ -64,26 +70,35 @@ CREATE TABLE USER (
 CREATE TABLE REPORT (
   report_no smallint NOT NULL AUTO_INCREMENT primary key,
   user_id smallint NOT NULL,
-  incident_date datetime NOT NULL,
+  experience smallint NOT NULL,
+  patient_name text NOT NULL,
+  patient_age tinyint NOT NULL,
+  patient_gender text NOT NULL,
+  clinical_dept_id tinyint NOT NULL,
+  disease text NOT NULL,
+  hospital_date date NOT NULL,
+  doctor text NOT NULL,
+  incident_datetime datetime NOT NULL,
   scene_id tinyint NOT NULL,
   content_id tinyint NOT NULL,
   detail_id tinyint NOT NULL,
   mistake_id tinyint NOT NULL,
-  report_date datetime NOT NULL,
+  report_datetime datetime NOT NULL,
   dest_id tinyint NOT NULL,
   risk tinyint NOT NULL,
   lose_trust tinyint NOT NULL,
   situation text NOT NULL,
-  correspondence text NOT NULL,
+  response text NOT NULL,
   factor text NOT NULL,
-  measure text NOT NULL,
+  prevention text NOT NULL,
   comment text,
   CONSTRAINT report_userid_fk FOREIGN KEY (user_id) REFERENCES USER(user_id),
   CONSTRAINT report_scene_fk FOREIGN KEY (scene_id) REFERENCES MST_SCENE(scene_id),
   CONSTRAINT report_content_fk FOREIGN KEY (content_id) REFERENCES MST_CONTENT(content_id),
   CONSTRAINT report_detail_fk FOREIGN KEY (detail_id) REFERENCES MST_DETAIL(detail_id),
   CONSTRAINT report_mistake_fk FOREIGN KEY (mistake_id) REFERENCES MST_MISTAKE(mistake_id),
-  CONSTRAINT report_dest_fk FOREIGN KEY (dest_id) REFERENCES MST_DEST(dest_id)
+  CONSTRAINT report_dest_fk FOREIGN KEY (dest_id) REFERENCES MST_DEST(dest_id),
+  CONSTRAINT report_clinical_dept_fk FOREIGN key (clinical_dept_id) REFERENCES MST_CLINICAL_DEPT (clinical_dept_id)
 );
 
 INSERT INTO MST_JOB (job_name) VALUES ('医師');
@@ -220,3 +235,16 @@ INSERT INTO MST_MISTAKE (mistake) VALUES ('同意未確認');
 INSERT INTO MST_DEST (dest) VALUES ('主治医');
 INSERT INTO MST_DEST (dest) VALUES ('当直医');
 INSERT INTO MST_DEST (dest) VALUES ('所属長');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('総合内科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('消化器内科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('循環器内科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('呼吸器内科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('腎臓内科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('泌尿器科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('整形外科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('呼吸器外科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('脳神経外科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('心臓血管外科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('皮膚科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('眼科');
+INSERT INTO MST_CLINICAL_DEPT (clinical_dept_name) VALUES ('麻酔科');

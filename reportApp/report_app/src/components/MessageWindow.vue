@@ -1,11 +1,20 @@
 <template>
   <div class="modal">
-    <div  v-if="getPostStatus === 'SUCCESS'" class="modal_box">
+    <div  v-if="getPostStatus === 'REGISTRATION SUCCESS'" class="modal_box">
       <div class="modal_message">
         {{ myEmail }}に登録用URLを送信しました
       </div>
       <div class="modal_action">
         <button class="modal_btn" @click="toggleMessageWindow(false); $router.push('/SignIn')">OK</button>
+      </div>
+    </div>
+
+    <div  v-if="getPostStatus === 'REPORT SUCCESS'" class="modal_box">
+      <div class="modal_message">
+        インシデントを報告しました。
+      </div>
+      <div class="modal_action">
+        <button class="modal_btn" @click="toggleMessageWindow(false); $router.push('/ReportList')">OK</button>
       </div>
     </div>
 

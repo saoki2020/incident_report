@@ -92,4 +92,16 @@ module.exports = {
         });
       });
     },
+  // MST_CLINICAL_DEPTのデータを取得する
+    selectClinicalDepts(req, res) {
+      const sql = 'SELECT * FROM MST_CLINICAL_DEPT';
+      return new Promise(resolve => {
+        connection.query(sql, (error, value) => {
+          if (error) throw new Error('failed SELECT MST_CLINICAL_DEPT');
+          if (!value) throw new Error('value does not exists');
+          res.json(value);
+          resolve();
+        });
+      });
+    },
   }

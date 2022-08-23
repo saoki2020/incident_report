@@ -10,4 +10,5 @@ module.exports = [
   router.get('/masters/details', mastersController.getDetails),
   router.get('/masters/mistakes', mastersController.getMistakes),
   router.get('/masters/dests', mastersController.getDests),
+  router.get('/masters/clinicalDepts', mastersController.getClinicalDepts),
 ]

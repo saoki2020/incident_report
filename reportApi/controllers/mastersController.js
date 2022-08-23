@@ -21,5 +21,8 @@ module.exports = {
   },
   getDests(req, res) {
     mastersModel.selectDests(req, res);
-  }
+  },
+  getClinicalDepts(req, res) {
+    mastersModel.selectClinicalDepts(req, res);
+  },
 }
