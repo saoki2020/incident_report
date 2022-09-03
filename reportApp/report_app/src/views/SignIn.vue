@@ -7,11 +7,12 @@
             <h2>ログイン</h2>
           </v-card-title>
           <v-card-text>
-            <v-form>
+            <v-form ref="formValid">
               <v-text-field
                 prepend-icon="mdi-account-circle"
                 label="メールアドレス"
                 v-model="email"
+                :rules="[validRule.required,validRule.email]"
               />
               <v-text-field
                 v-bind:type="showPass ? 'text' : 'password'"
@@ -20,6 +21,7 @@
                 @click:append="showPass = !showPass"
                 label="パスワード"
                 v-model="password"
+                :rules="[validRule.required,validRule.minlength]"
               />
               <v-card-actions>
                 <v-btn class="teal lighten-2" dark @click="onSignIn">ログイン</v-btn>
@@ -48,10 +50,15 @@ export default {
   data: () => ({
     showPass : false,
     email: '',
-    password: ''
+    password: '',
+    validRule: {
+      required: v => !!v || "必須項目です",
+      email: v => /.+@.+\..+/.test(v) || "メールアドレスを入力してください",
+      minlength: v => (v && v.length >=7) || "パスワードは7文字以上です"
+    },
   }),
   computed: {
-    ...mapGetters(['getMessageWindowStatus']),
+    ...mapGetters(['getMessageWindowStatus','getUserInfo']),
   },
   methods: {
     ...mapActions(['axiosAuthentication','toggleMessageWindow']),
@@ -61,7 +68,11 @@ export default {
           email: this.email,
           password: this.password
         })
-        this.$router.push('/ReportList')
+        if (this.getUserInfo.isChief===1) {
+          this.$router.push('/ChiefPage')
+        } else {
+          this.$router.push('/ReportList')
+        }
       } catch (error) {
         console.log('error on Signin')
         console.log(error)

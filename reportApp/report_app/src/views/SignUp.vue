@@ -11,14 +11,17 @@
               <v-text-field
                 label="氏名"
                 v-model="name"
+                :rules="[validRule.required]"
               />
               <v-text-field
                 label="メールアドレス"
                 v-model="email"
+                :rules="[validRule.required,validRule.email]"
               />
               <v-text-field
                 label="パスワード"
                 v-model="password"
+                :rules="[validRule.required,validRule.minlength]"
               />
               <v-select
                 label="職業"
@@ -26,6 +29,7 @@
                 :items="getJobs"
                 item-text="job_name"
                 item-value="job_id"
+                :rules="[validRule.required]"
               />
               <v-select
                 label="所属"
@@ -33,6 +37,7 @@
                 :items="getDepts"
                 item-text="dept_name"
                 item-value="dept_id"
+                :rules="[validRule.required]"
               />
               <v-checkbox v-model="isChief" :label="`役職者`" />
               <v-card-actions>
@@ -67,6 +72,11 @@ export default {
     job: '',
     department: '',
     isChief: false,
+    validRule: {
+      required: v => !!v || "必須項目です",
+      email: v => /.+@.+\\..+/.test(v) || "メールアドレスを入力してください",
+      minlength: v => (v && v.length >=7) || "パスワードは7文字以上です"
+    },
   }),
   computed: {
     ...mapGetters(['getJobs','getDepts', 'getMessageWindowStatus']),

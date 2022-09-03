@@ -36,13 +36,32 @@ const routes = [
     path: '/PostReport',
     name: 'PostReport',
     component: () => import(/* webpackChunkName: "PostReport" */ '../views/PostReport.vue'),
-    // meta: {requiresAuth: true}
+    meta: {requiresAuth: true}
   },
   {
     path: '/Statistics',
     name: 'Statistics',
     component: () => import(/* webpackChunkName: "Statistics" */ '../views/Statistics.vue'),
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/ChiefPage',
+    name: 'ChiefPage',
+    component: () => import(/* webpackChunkName: "ChiefPage" */ '../views/ChiefPage.vue'),
+    meta: {requiresAuthChief: true}
+  },
+  {
+    path: '/ChiefCommented',
+    name: 'ChiefCommented',
+    component: () => import(/* webpackChunkName: "ChiefCommented" */ '../views/ChiefCommented.vue'),
+    meta: {requiresAuthChief: true}
+  },
+  {
+    path: '/ErrorPage',
+    name: 'ErrorPage',
+    props: true,
+    component: () => import(/* webpackChunkName: "ErrorPage" */ '../views/ErrorPage.vue'),
+    // meta: {requiresAuth: true}
   },
 ]
 
@@ -64,6 +83,22 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
+
+// 役職者だけがアクセスできる
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuthChief) {
+    if (!store.getters.getUserInfo) {
+      next('/SignIn')
+    } else if (store.getters.getUserInfo.isChief!=1){
+      next('/ErrorPage')
+    } else {
+      next()
+    }
+  } else {
+    next();
+  }
+});
+
 
 // axios.getでユーザー情報が取ってこれれば遷移できる
 // router.beforeEach(async (to, from, next) => {

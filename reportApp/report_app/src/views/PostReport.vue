@@ -7,12 +7,10 @@
       <v-row justify="center">
         <v-col cols="8">
         <!-- コンポーネントを表示する -->
-        <!-- <keep-alive> -->
           <ReportForm1 v-if="formNum===1"
             :year.sync="post.workYear"
             :month.sync="post.workMonth"
-            :rules="[rules.required]"
-            :ref="form1Valid"
+            :formNum.sync="formNum"
             />
           <ReportForm2 v-if="formNum===2"
             :name.sync="post.patientName"
@@ -22,6 +20,7 @@
             :disease.sync="post.disease"
             :date.sync="post.hospitalDate"
             :doctor.sync="post.doctor"
+            :formNum.sync="formNum"
           />
           <ReportForm3 v-if="formNum===3"
             :iDate.sync="post.incidentDate"
@@ -35,20 +34,22 @@
             :dest.sync="post.selectedDest"
             :rDate.sync="post.reportDate"
             :rTime.sync="post.reportTime"
+            :formNum.sync="formNum"
           />
           <ReportForm4 v-if="formNum===4"
             :situation.sync="post.incidentSituation"
             :response.sync="post.incidentResponse"
             :factor.sync="post.incidentFactor"
             :prevention.sync="post.incidentPrevention"
+            :formNum.sync="formNum"
           />
           <ReportConfirm v-if="formNum===5"
             :postData="post"
+            :formNum.sync="formNum"
           />
-        <!-- </keep-alive> -->
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <!-- <v-row justify="center">
         <v-col cols="1">
           <v-btn v-if="1<formNum&&formNum<=5" color="teal" outlined @click="decreaseForm">戻る</v-btn>
         </v-col>
@@ -58,7 +59,7 @@
         <v-col cols="1">
           <v-btn  v-if="formNum===4" class="teal lighten-2" dark @click="increaseForm">提出する</v-btn>
         </v-col>
-      </v-row>
+      </v-row> -->
     </v-container>
   </v-app>
 </template>
@@ -128,7 +129,5 @@ export default {
 </script>
 
 <style scoped>
-  .text {
-    white-space: pre-wrap;
-  }
+
 </style>

@@ -40,7 +40,14 @@
       <div class="black--text ml-5">{{postData.incidentPrevention}}</div>
     </v-card-text>
     <v-card-actions class="justify-center">
-      <v-btn class="teal lighten-2" dark block @click="onSubmit">報告する</v-btn>
+      <v-row justify="center">
+        <v-col cols="2">
+          <v-btn v-if="1<formNum&&formNum<=5" color="teal" dark block outlined @click="decreaseForm">戻る</v-btn>
+        </v-col>
+        <v-col cols="2">
+          <v-btn  v-if="formNum===5" class="teal lighten-2" dark @click="onSubmit">報告する</v-btn>
+        </v-col>
+      </v-row>
     </v-card-actions>
   </v-card>
   <MessageWindow v-if="getMessageWindowStatus" />
@@ -72,7 +79,8 @@ export default {
     }
   },
   props: [
-    "postData"
+    "postData",
+    "formNum"
   ],
   computed: {
     ...mapGetters(['getUserInfo', 'getJobs', 'getDepts', 'getClinicalDepts', 'getScenes' ,'getContents', 'getDetails', 'getMistakes', 'getDests','getMessageWindowStatus'])
@@ -82,7 +90,10 @@ export default {
     onSubmit() {
       this.axiosPostReport(this.postData)
       this.toggleMessageWindow(true)
-    }
+    },
+    decreaseForm() {
+      this.$emit("update:formNum", this.formNum - 1)
+    },
   },
   created() {
     this.axiosGetJobs()

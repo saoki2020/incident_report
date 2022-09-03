@@ -5,6 +5,10 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
+// import Toasted from 'vue-toasted'
+
+Vue.use(require('vue-moment'))
+// Vue.use(Toasted)
 
 Vue.config.productionTip = false
 

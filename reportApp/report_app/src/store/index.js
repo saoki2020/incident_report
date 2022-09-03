@@ -17,10 +17,13 @@ export default new Vuex.Store({
     postResult: [],
     postError: [],
     messageWindowStatus: false,
+    deleteWindowStatus: false,
+    editWindowStatus: false,
     postStatus: '',
     userId: '',
     token: '',
     userInfo: '',
+    report: [],
   },
   getters: {
     getJobs: state => state.jobs,
@@ -34,10 +37,13 @@ export default new Vuex.Store({
     getResult: state => state.postResult,
     getError: state => state.postError,
     getMessageWindowStatus: state => state.messageWindowStatus,
+    getDeleteWindowStatus: state => state.deleteWindowStatus,
+    getEditWindowStatus: state => state.editWindowStatus,
     getPostStatus: state => state.postStatus,
     getUserId: state => state.userId,
     getToken: state => state.token,
     getUserInfo: state => state.userInfo,
+    getReport: state => state.report
   },
   mutations: {
     setJobs: (state, value) => state.jobs = value,
@@ -51,6 +57,8 @@ export default new Vuex.Store({
     setResult: (state, value) => state.postResult = value,
     setError: (state, value) => state.postError = value,
     setMessageWindowStatus: (state, value) => state.messageWindowStatus = value,
+    setDeleteWindowStatus: (state, value) => state.deleteWindowStatus = value,
+    setEditWindowStatus: (state, value) => state.editWindowStatus = value,
     setPostStatus: (state, value) => state.postStatus = value,
     setUserId: (state, value) => state.userId = value,
     setToken: (state, value) => state.token = value,
@@ -61,11 +69,18 @@ export default new Vuex.Store({
       state.userInfo = null
       localStorage.removeItem('accessToken')
     },
+    setReport: (state, value) => state.report = value,
   },
   actions: {
     // モーダルウインドウの操作
     toggleMessageWindow({commit}, payload) {
       commit('setMessageWindowStatus', payload)
+    },
+    toggleDeleteWindow({commit}, payload) {
+      commit('setDeleteWindowStatus', payload)
+    },
+    toggleEditWindow({commit}, payload) {
+      commit('setEditWindowStatus', payload)
     },
     // APIの操作
     async axiosGetJobs({commit}) {
@@ -163,7 +178,81 @@ export default new Vuex.Store({
         commit('setError', error.response.data)
         commit('setPostStatus', 'ERROR')
       }
-    }
+    },
+    async axiosGetReportForChief({commit}) {
+      try {
+        console.log('axiosGetReportForChief working')
+        const res = await axios.get('http://localhost:3000/report/chief')
+        commit('setReport', res.data)
+      } catch (error) {
+        console.log('axiosGetReport Error')
+        console.dir(error.response.data)
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+      }
+    },
+    async axiosGetCommentedReport({commit}) {
+      try {
+        console.log('axiosGetCommented working')
+        const res = await axios.get('http://localhost:3000/report/commented')
+        commit('setReport', res.data)
+      } catch (error) {
+        console.log('axiosGetCommentedReport Error')
+        console.dir(error.response.data)
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+      }
+    },
+    async axiosGetReport({commit, getters}) {
+      try {
+        console.log('axiosGetReport with ID working')
+        const res = await axios.get('http://localhost:3000/report', {params: {userId: getters.getUserInfo.user_id}})
+        commit('setReport', res.data)
+      } catch (error) {
+        console.log('axiosGetReport Error')
+        console.dir(error.response.data)
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+      }
+    },
+    async axiosPostComment({commit}, commentData) {
+      try {
+        console.log(`axiosPostComment postData.reportNo = ${commentData.reportNo}}`)
+        console.log(`axiosPostComment postData.comment = ${commentData.comment}}`)
+        const res = await axios.post("http://localhost:3000/report/postComment", {commentData})
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosPostComment Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosDeleteReport({commit}, reportNo) {
+      try {
+        const res = await axios.post("http://localhost:3000/report/delete", {reportNo})
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosDeleteReport Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosEditReport({commit}, editData) {
+      try {
+        console.log('axiosEditReport working')
+        console.log(`editData.itemName = ${editData.itemName}`)
+        console.log(`editData.itemValue= ${editData.itemValue}`)
+        const res = await axios.post("http://localhost:3000/report/edit", {editData})
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosEditReport Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
     // Promiseを使うバージョン
     // async axiosAuthentication({commit}, {email, password}) {
     //   await new Promise((resolve, reject) => {

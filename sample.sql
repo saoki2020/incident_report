@@ -1,86 +1,18 @@
+ユーザー１：役職者
+ユーザー２：一般
 
--- テーブル作成
-CREATE TABLE MST_JOB (
-  job_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  job_name varchar(255) NOT NULL
-);
+役職者１、コメント未
+INSERT INTO REPORT (user_id, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention)
+VALUES (1,25,'患者太郎',99,'Male',1,'イレウス','2020-01-01','医者１','2020-01-01 12:00:00',1,1,1,1,'2020-01-01',1,1,1,'インシデント発生時の状況を説明','その場で行った対応を説明','原因を分析','対応策を考える');
 
-CREATE TABLE MST_DEPARTMENT (
-  dept_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  dept_name varchar(255) NOT NULL
-);
+一般２、コメント未
+INSERT INTO REPORT (user_id, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention)
+VALUES (2,30,'患者次郎',88,'Male',2,'心筋梗塞','2021-01-01','医者2','2021-01-01 12:00:00',2,2,2,2,'2021-01-01',2,2,2,'インシデント発生時の状況を説明','その場で行った対応を説明','原因を分析','対応策を考える');
 
-CREATE TABLE MST_SCENE (
-  scene_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  scene varchar(255) NOT NULL
-);
+一般２、コメント済
+INSERT INTO REPORT (user_id, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention, comment)
+VALUES (2,30,'患者三郎',88,'Male',2,'心筋梗塞','2022-01-01','医者2','2022-01-01 12:00:00',3,3,3,3,'2022-01-01',3,3,3,'インシデント発生時の状況を説明','その場で行った対応を説明','原因を分析','対応策を考える','役職者のコメント');
 
-CREATE TABLE MST_CONTENT (
-  content_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  content varchar(255) NOT NULL
-);
-
-CREATE TABLE MST_DETAIL (
-  detail_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  detail varchar(255) NOT NULL
-);
-
-CREATE TABLE MST_MISTAKE (
-  mistake_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  mistake varchar(255) NOT NULL
-);
-
-CREATE TABLE MST_DEST (
-  dest_id tinyint NOT NULL AUTO_INCREMENT primary key,
-  dest varchar(255) NOT NULL
-);
-
-CREATE TABLE USER (
-  user_id smallint NOT NULL AUTO_INCREMENT primary key,
-  name varchar(255) NOT NULL,
-  email varchar(255) NOT NULL,
-  job_id tinyint NOT NULL,
-  dept_id tinyint NOT NULL,
-  isChief boolean NOT NULL,
-  isRegistration boolean NOT NULL,
-  CONSTRAINT user_jobid_fk FOREIGN KEY (job_id) REFERENCES MST_JOB(job_id),
-  CONSTRAINT user_deptid_fk FOREIGN KEY (dept_id) REFERENCES MST_DEPARTMENT(dept_id)
-);
-
-CREATE TABLE REPORT (
-  report_no smallint NOT NULL AUTO_INCREMENT primary key,
-  user_id smallint NOT NULL,
-  incident_date datetime NOT NULL,
-  scene_id tinyint NOT NULL,
-  content_id tinyint NOT NULL,
-  detail_id tinyint NOT NULL,
-  mistake_id tinyint NOT NULL,
-  report_date datetime NOT NULL,
-  dest_id tinyint NOT NULL,
-  risk tinyint NOT NULL,
-  lose_trust tinyint NOT NULL,
-  situation text NOT NULL,
-  correspondence text NOT NULL,
-  factor text NOT NULL,
-  measure text NOT NULL,
-  comment text,
-  CONSTRAINT report_userid_fk FOREIGN KEY (user_id) REFERENCES USER(user_id),
-  CONSTRAINT report_scene_fk FOREIGN KEY (scene_id) REFERENCES MST_SCENE(scene_id),
-  CONSTRAINT report_content_fk FOREIGN KEY (content_id) REFERENCES MST_CONTENT(content_id),
-  CONSTRAINT report_detail_fk FOREIGN KEY (detail_id) REFERENCES MST_DETAIL(detail_id),
-  CONSTRAINT report_mistake_fk FOREIGN KEY (mistake_id) REFERENCES MST_MISTAKE(mistake_id),
-  CONSTRAINT report_dest_fk FOREIGN KEY (dest_id) REFERENCES MST_DEST(dest_id)
-);
-
-
---マスターテーブルのデータ入力
-INSERT INTO MST_JOB (job_name) VALUES ('医師');
-INSERT INTO MST_JOB (job_name) VALUES ('看護師');
-INSERT INTO MST_JOB (job_name) VALUES ('理学療法士');
-INSERT INTO MST_JOB (job_name) VALUES ('作業療法士');
-INSERT INTO MST_JOB (job_name) VALUES ('放射線技師');
-INSERT INTO MST_JOB (job_name) VALUES ('臨床工学技士');
-INSERT INTO MST_JOB (job_name) VALUES ('薬剤師');
-INSERT INTO MST_JOB (job_name) VALUES ('事務');
-INSERT INTO MST_JOB (job_name) VALUES ('クラーク');
-INSERT INTO MST_JOB (job_name) VALUES ('その他');
+役職者１、コメント済
+INSERT INTO REPORT (user_id, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention, comment)
+VALUES (1,25,'患者四郎',77,'Fale',1,'睡眠時無呼吸症候群','2020-02-01','医者3','2020-02-01 12:00:00',4,4,4,4,'2020-02-01',3,4,4,'インシデント発生時の状況を説明','その場で行った対応を説明','原因を分析','対応策を考える','役職者のコメント');

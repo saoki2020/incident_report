@@ -5,13 +5,14 @@
       <span>アクシデント内容を入力してください</span>
     </v-card-title>
     <v-card-text>
-      <v-form>
+      <v-form ref="formValid">
         <v-row>
           <v-col cols="6">
             <v-text-field
             type="date"
             label="発生日"
             v-model="incidentDate"
+            :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -19,6 +20,7 @@
             type="time"
             label="発生時刻"
             v-model="incidentTime"
+            :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -28,6 +30,7 @@
               :items="getScenes"
               item-text="scene"
               item-value="scene_id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -37,6 +40,7 @@
               :items="getContents"
               item-text="content"
               item-value="content_id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -46,6 +50,7 @@
               :items="getDetails"
               item-text="detail"
               item-value="detail_id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -55,6 +60,7 @@
               :items="getMistakes"
               item-text="mistake"
               item-value="mistake_id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -64,6 +70,7 @@
               :items="risks"
               item-text="riskLevel"
               item-value="id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -73,6 +80,7 @@
               :items="trusts"
               item-text="loseTrust"
               item-value="id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="12">
@@ -82,6 +90,7 @@
               :items="getDests"
               item-text="dest"
               item-value="dest_id"
+              :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -89,6 +98,7 @@
             type="date"
             label="報告日"
             v-model="reportDate"
+            :rules="[required]"
             />
           </v-col>
           <v-col cols="6">
@@ -96,11 +106,22 @@
             type="time"
             label="報告時刻"
             v-model="reportTime"
+            :rules="[required]"
             />
           </v-col>
         </v-row>
       </v-form>
     </v-card-text>
+    <v-card-actions class="justify-center">
+      <v-row justify="center">
+        <v-col cols="2">
+          <v-btn v-if="1<formNum&&formNum<=5" color="teal" dark block outlined @click="decreaseForm">戻る</v-btn>
+        </v-col>
+        <v-col cols="2">
+          <v-btn v-if="formNum<=4" class="teal lighten-2" dark block @click="increaseForm">次へ</v-btn>
+        </v-col>
+      </v-row>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -120,6 +141,7 @@ export default {
     "dest",
     "rDate",
     "rTime",
+    "formNum"
   ],
   data() {
     return {
@@ -134,7 +156,8 @@ export default {
         {id:2, loseTrust:"あまり損なわない"},
         {id:3, loseTrust:"少し損なう"},
         {id:4, loseTrust:"大きく損なう"},
-      ]
+      ],
+      required: value => !!value || "必須項目です",
     }
   },
   computed: {
@@ -242,6 +265,13 @@ export default {
       "axiosGetMistakes",
       "axiosGetDests"
       ]),
+    increaseForm() {
+      if (this.$refs.formValid.validate())
+        this.$emit("update:formNum", this.formNum + 1)
+    },
+    decreaseForm() {
+      this.$emit("update:formNum", this.formNum - 1)
+    },
   },
   created() {
     this.axiosGetScenes()

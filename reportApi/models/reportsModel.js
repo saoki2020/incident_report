@@ -60,4 +60,129 @@ module.exports = {
       })
     });
   },
+  async selectNoCommentReport (req, res) {
+    console.log('selectNoCommentReport working')
+    const sql = 'select * from REPORT where comment is NULL';
+    return new Promise((resolve, reject) => {
+      connection.query(sql, (error, result) => {
+        if (error) {
+          console.log('###error on selectNoCommentREPORT###');
+          console.log(typeof(error));
+          for(const key in error) {
+            console.log(`${key}: ${error[key]}`)
+          }
+          reject(error);
+          return;
+        }
+        console.log('##success on selectNoCommentREPORT##');
+        console.log(`result[0] = ${result[0]}`);
+        console.log(`result = ${result}`);
+        console.dir(result);
+        resolve(result);
+      })
+    })
+  },
+  async selectCommentedReport (req, res) {
+    console.log('selectCommentedReport working')
+    const sql = 'select * from REPORT where comment is not NULL';
+    return new Promise((resolve, reject) => {
+      connection.query(sql, (error, result) => {
+        if (error) {
+          console.log('###error on selectCommentedREPORT###');
+          console.log(typeof(error));
+          for(const key in error) {
+            console.log(`${key}: ${error[key]}`)
+          }
+          reject(error);
+          return;
+        }
+        console.log('##success on selectCommentedREPORT##');
+        console.log(`result[0] = ${result[0]}`);
+        console.log(`result = ${result}`);
+        console.dir(result);
+        resolve(result);
+      })
+    })
+  },
+  async selectReportById (req, res) {
+    console.log('selectReportById working');
+    console.dir(req.query);
+    console.log(`req.params.userId = ${req.query.userId}`);
+    const sql = 'select * from REPORT where user_id = ? or comment is not NULL';
+    const params = [req.query.userId];
+    return new Promise((resolve, reject) => {
+      connection.query(sql, params, (error, result) => {
+        if (error) {
+          console.log('###error on selectREPORT###');
+          console.log(typeof(error));
+          for(const key in error) {
+            console.log(`${key}: ${error[key]}`)
+          }
+          reject(error);
+          return;
+        }
+        console.log('##success on selectREPORT##');
+        console.log(`result[0] = ${result[0]}`);
+        console.log(`result = ${result}`);
+        console.dir(result);
+        resolve(result);
+      })
+    })
+  },
+  async updateComment(req, res) {
+    console.log('updateComment working');
+    const sql = "update REPORT set comment = ? where report_no = ?";
+    const params = [req.body.commentData.comment, req.body.commentData.reportNo];
+    return new Promise((resolve, reject) => {
+      connection.query(sql, params, (error, result) => {
+        if (error) {
+          console.log('####error on InsertComment##');
+          console.log(typeof(error));
+          for(const key in error) {
+            console.log(`${key}: ${error[key]}`)
+          }
+          reject(error);
+          return;
+        }
+        console.log('##success on InserComment##');
+        console.log(`result = ${result}`);
+        resolve(result);
+      })
+    });
+  },
+  async deleteReport(req, res) {
+    const sql = "delete from REPORT where report_no = ?";
+    const params = [req.body.reportNo];
+    return new Promise((resolve, reject) => {
+      connection.query(sql, params, (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    });
+  },
+  async updateReport(req, res) {
+    console.log('updateReport working');
+    console.log(`req.body.editData.itemName = ${req.body.editData.itemName}`)
+    const sql = "update REPORT set ?? = ? where report_no = ?";
+    const params = [req.body.editData.itemName, req.body.editData.itemValue, req.body.editData.reportNo];
+    return new Promise((resolve, reject) => {
+      connection.query(sql, params, (error, result) => {
+        if (error) {
+          console.log('####Edit Report Error##');
+          console.log(typeof(error));
+          for(const key in error) {
+            console.log(`${key}: ${error[key]}`)
+          }
+          reject(error);
+          return;
+        }
+        console.log('##Edit Report Success##');
+        console.log(`result = ${result}`);
+        resolve(result);
+      })
+    });
+  },
 }
