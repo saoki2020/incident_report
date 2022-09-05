@@ -126,6 +126,15 @@ module.exports = {
     console.dir(user);
     res.json(user);
   },
+  async getUserById(req,res) {
+    console.log('getUserById Working');
+    console.log(`req.qquery.userId= ${req.query.userId}`);
+    const user = await usersModel.selectUserById(req.query.userId);
+    if(!user) return res.status(404).json('ユーザーは存在しません');
+    console.log('####getUser##');
+    console.dir(user);
+    res.json(user);
+  },
   testMail(req, res) {
     try {
       console.log('testMail working');

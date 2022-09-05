@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   async getNoCommentReport(req, res) {
-    // commentが未登録のレポートをselectする
+    // commentが未登録のレポートにUSER,JOB,DEPTを結合してから取得する
     try {
       console.log("###getNoCommentReport###");
       const reports = await reportsModel.selectNoCommentReport(req, res);
@@ -27,7 +27,7 @@ module.exports = {
     }
   },
   async getCommentedReport(req, res) {
-    // commentが登録済みのレポートをselectする
+    // commentが登録済みのレポートにUSER,JOB,DEPTを結合してから取得する
     try {
       console.log("###getCommentedReport###");
       const reports = await reportsModel.selectCommentedReport(req, res);

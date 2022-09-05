@@ -1,7 +1,15 @@
 <template>
   <v-app>
-    <v-container v-if="getScenes.length&&getContents.length&&getDetails.length&&getMistakes.length&&getDests.length">
-      <v-row v-for="(item,index) in getReport" :key="index" class="mb-12" no-gutters>
+    <v-container v-if="getScenes.length&&getContents.length&&getDetails.length&&getMistakes.length&&getDests.length&&getClinicalDepts.length">
+      <v-row justify="center">
+        <v-col cols="2">
+          <v-select :items="year" label="年" v-model="selectedYear"/>
+        </v-col>
+        <v-col cols="2">
+          <v-select :items="month" label="月" v-model="selectedMonth"/>
+        </v-col>
+      </v-row>
+      <v-row v-for="(item,index) in filteredReport()" :key="index" class="mb-12" no-gutters>
         <v-col cols="1">
           <v-row no-gutters>
             <v-row no-gutters justify="center">
@@ -26,6 +34,7 @@
             </v-row>
           </v-row>
         </v-col>
+<!-- 概要 -->
         <v-col cols="11" class="report_border">
           <v-row class="cell_border" no-gutters >
             <v-col cols="2" class="cell_border">
@@ -33,7 +42,7 @@
             </v-col>
             <v-col cols="2" class="cell_border">
               <span>発生日：</span>{{item.incident_datetime | moment("YYYY年M月D日 H:mm") }}
-              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'incident_datetime', item.report_datetime)">
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'incident_datetime', item.incident_datetime)">
                 <v-icon dark>mdi-pencil</v-icon>
               </v-btn>
             </v-col>
@@ -42,7 +51,6 @@
               <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'scene_id', item.scene_id)">
                 <v-icon dark>mdi-pencil</v-icon>
               </v-btn>
-              {{item.scene_id}}
             </v-col>
             <v-col cols="2" class="cell_border">
               <span>内容：</span>{{getContents[item.content_id-1].content}}
@@ -63,6 +71,52 @@
               </v-btn>
             </v-col>
           </v-row>
+<!-- 患者情報 -->
+          <v-row class="cell_border" no-gutters >
+            <v-col cols="2" class="cell_border">
+              <span>患者名：</span>{{item.patient_name}}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'patient_name', item.patient_name)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="1" class="cell_border">
+              <span>年齢：</span>{{item.patient_age}}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'patient_age', item.patient_age)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="1" class="cell_border">
+              <span>性別：</span>{{item.patient_gender}}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'patient_gender', item.patient_gender)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="2" class="cell_border">
+              <span>診療科：</span>{{getClinicalDepts[item.clinical_dept_id-1].clinical_dept_name}}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'clinical_dept_id', item.clinical_dept_id)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="2" class="cell_border">
+              <span>傷病名：</span>{{item.disease}}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'disease', item.disease)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="2" class="cell_border">
+              <span>入院日：</span>{{item.hospital_date | moment("YYYY年M月D日") }}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'hospital_date', item.hospital_date)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="2" class="cell_border">
+              <span>主治医：</span>{{item.doctor}}
+              <v-btn v-if="item.report_no==selectedReport" color="cyan" class="mx-2" fab dark x-small @click="openEditWindow(item.report_no, 'doctor', item.doctor)">
+                <v-icon dark>mdi-pencil</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+<!-- 報告先 -->
           <v-row class="cell_border" no-gutters>
             <v-col cols="3" class="cell_border">
               <span>報告日時：</span>{{item.report_datetime | moment("YYYY年M月D日 H:mm") }}
@@ -89,6 +143,7 @@
               </v-btn>
             </v-col>
           </v-row>
+<!-- 詳細 -->
           <v-row class="cell_border" no-gutters>
             <v-col cols="3" class="cell_border">
               <span>-発生時の状況-</span><br>{{item.situation}}
@@ -156,7 +211,7 @@ export default {
         {id:1, loseTrust:"損なわない"},
         {id:2, loseTrust:"あまり損なわない"},
         {id:3, loseTrust:"少し損なう"},
-        {id:4, loseTrust:"大きく損なう"},
+        {id:4, loseTrust:"大きく損なう"}
       ],
       reportNo: '',
       isActive: false,
@@ -165,14 +220,19 @@ export default {
         reportNo: '',
         itemName: '',
         itemValue: ''
-      }
+      },
+      year: ["全期間", 2019, 2020, 2021, 2022],
+      month: ["全期間", 1,2,3,4,5,6,7,8,9,10,11,12],
+      selectedYear: '全期間',
+      selectedMonth: '全期間',
     }
   },
   computed: {
-    ...mapGetters(["getReport",'getScenes','getContents','getDetails','getMistakes','getDests','getUserInfo','getDeleteWindowStatus','getEditWindowStatus'])
+    ...mapGetters(["getReport",'getScenes','getContents','getDetails','getMistakes','getDests','getUserInfo','getDeleteWindowStatus','getEditWindowStatus','getClinicalDepts']),
+
   },
   methods: {
-    ...mapActions(["axiosGetReport","axiosGetScenes","axiosGetContents","axiosGetDetails","axiosGetMistakes","axiosGetDests","toggleDeleteWindow","toggleEditWindow"]),
+    ...mapActions(["axiosGetReport","axiosGetScenes","axiosGetContents","axiosGetDetails","axiosGetMistakes","axiosGetDests","toggleDeleteWindow","toggleEditWindow","axiosGetClinicalDepts"]),
     reportDelete(value) {
       console.log(`report_no = value = ${value}`)
       this.reportNo = value
@@ -196,6 +256,27 @@ export default {
       this.reportData.itemName = item
       this.reportData.itemValue = value
       this.toggleEditWindow(true)
+    },
+    filteredReport() {
+      if (this.selectedYear!="全期間") {
+        if (this.selectedMonth!="全期間"){
+          return this.getReport.filter((value) => {
+            return new Date(value.report_datetime).getFullYear() == this.selectedYear && new Date(value.report_datetime).getMonth()+1 == this.selectedMonth()
+        })
+        } else {
+          return this.getReport.filter((value) => {
+            return new Date(value.report_datetime).getFullYear() == this.selectedYear
+        })
+        }
+      } else {
+        if (this.selectedMonth!="全期間"){
+          return this.getReport.filter((value) => {
+            return new Date(value.report_datetime).getMonth()+1 == this.selectedMonth
+        })
+        } else {
+          return this.getReport
+        }
+      }
     }
   },
   created() {
@@ -205,7 +286,8 @@ export default {
     this.axiosGetDetails()
     this.axiosGetMistakes()
     this.axiosGetDests()
-  }
+    this.axiosGetClinicalDepts()
+  },
 }
 </script>
 

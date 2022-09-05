@@ -43,7 +43,7 @@ export default new Vuex.Store({
     getUserId: state => state.userId,
     getToken: state => state.token,
     getUserInfo: state => state.userInfo,
-    getReport: state => state.report
+    getReport: state => state.report,
   },
   mutations: {
     setJobs: (state, value) => state.jobs = value,
@@ -185,7 +185,7 @@ export default new Vuex.Store({
         const res = await axios.get('http://localhost:3000/report/chief')
         commit('setReport', res.data)
       } catch (error) {
-        console.log('axiosGetReport Error')
+        console.log('axiosGetReportForChief Error')
         console.dir(error.response.data)
         commit('setError', error.response.data)
         commit('setPostStatus', 'ERROR')
@@ -253,6 +253,7 @@ export default new Vuex.Store({
         throw error
       }
     },
+
     // Promiseを使うバージョン
     // async axiosAuthentication({commit}, {email, password}) {
     //   await new Promise((resolve, reject) => {

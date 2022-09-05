@@ -2,6 +2,7 @@
 <v-app>
   <div class="modal">
     <div class="modal_box">
+      {{newValue}}
       <v-form ref="formValid">
         <v-text-field
           v-if="reportData.itemName=='incident_datetime'"
@@ -56,6 +57,64 @@
           :items="getMistakes"
           item-text="mistake"
           item-value="mistake_id"
+          :rules="[required]"
+          @blur="setEditData()"
+        />
+        <v-text-field
+          v-if="reportData.itemName=='patient_name'"
+          label="患者氏名"
+          v-model="newValue"
+          :rules="[required]"
+          @blur="setEditData()"
+        />
+        <v-text-field
+          v-if="reportData.itemName=='patient_age'"
+          label="患者年齢"
+          v-model="newValue"
+          type="number"
+          :rules="[required]"
+          @blur="setEditData()"
+        />
+        <v-radio-group
+        v-if="reportData.itemName=='patient_gender'"
+        v-model="newValue"
+        label="性別"
+        row
+        :rules="[required]"
+        @change="setEditData()"
+        >
+          <v-radio label="男" value="Male"></v-radio>
+          <v-radio label="女" value="Female"></v-radio>
+        </v-radio-group>
+        <v-select
+          v-if="reportData.itemName=='clinical_dept_id'"
+          label="診療科"
+          v-model="newValue"
+          :items="getClinicalDepts"
+          item-text="clinical_dept_name"
+          item-value="clinical_dept_id"
+          :rules="[required]"
+          @blur="setEditData()"
+        />
+        <v-text-field
+          v-if="reportData.itemName=='disease'"
+          label="傷病名"
+          v-model="newValue"
+          :rules="[required]"
+          @blur="setEditData()"
+        />
+        <v-text-field
+          v-if="reportData.itemName=='hospital_date'"
+          type="date"
+          label="入院日"
+          v-model="newDate"
+          :rules="[required]"
+          @blur="setEditData();setNewDateTime()"
+        />
+        <v-text-field
+          v-if="reportData.itemName=='doctor'"
+          label="主治医"
+          v-model="newValue"
           :rules="[required]"
           @blur="setEditData()"
         />
@@ -186,10 +245,10 @@ export default {
     ],
   }),
   computed: {
-    ...mapGetters(['getScenes','getContents','getDetails','getMistakes','getDests'])
+    ...mapGetters(['getScenes','getContents','getDetails','getMistakes','getDests','getClinicalDepts'])
   },
   methods: {
-    ...mapActions(['toggleEditWindow','axiosGetReport','axiosEditReport','axiosGetScenes','axiosGetContents','axiosGetDetails','axiosGetMistakes','axiosGetDests']),
+    ...mapActions(['toggleEditWindow','axiosGetReport','axiosEditReport','axiosGetScenes','axiosGetContents','axiosGetDetails','axiosGetMistakes','axiosGetDests','axiosGetClinicalDepts']),
     editReport() {
       if (this.$refs.formValid.validate()){
         try {
@@ -208,6 +267,10 @@ export default {
       this.editData.reportNo = this.reportData.reportNo
       this.editData.itemName = this.reportData.itemName
       this.editData.itemValue = this.newValue
+      console.log('setEditData working')
+      console.log(`editData.reportNo = ${this.editData.reportNo}`)
+      console.log(`editData.itemName = ${this.editData.itemName}`)
+      console.log(`editData.itemValue = ${this.editData.itemValue}`)
     }
   },
   created() {
@@ -217,6 +280,7 @@ export default {
     this.axiosGetDetails()
     this.axiosGetMistakes()
     this.axiosGetDests()
+    this.axiosGetClinicalDepts()
     // 編集前のデータを表示
     this.newValue = this.reportData.itemValue
   }

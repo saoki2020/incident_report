@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: 'db',
   user: 'root',
   password: 'root',
-  database: 'report_db'
+  database: 'report_db',
 });
 
 
@@ -62,7 +62,7 @@ module.exports = {
   },
   async selectNoCommentReport (req, res) {
     console.log('selectNoCommentReport working')
-    const sql = 'select * from REPORT where comment is NULL';
+    const sql = 'select report_no, a.user_id, b.name, c.job_name, d.dept_name, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention, comment from REPORT a inner join USER b on a.user_id = b.user_id inner join MST_JOB c on b.job_id = c.job_id inner join MST_DEPARTMENT d on b.dept_id = d.dept_id where comment is NULL';
     return new Promise((resolve, reject) => {
       connection.query(sql, (error, result) => {
         if (error) {
@@ -84,7 +84,7 @@ module.exports = {
   },
   async selectCommentedReport (req, res) {
     console.log('selectCommentedReport working')
-    const sql = 'select * from REPORT where comment is not NULL';
+    const sql = 'select report_no, a.user_id, b.name, c.job_name, d.dept_name, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention, comment from REPORT a inner join USER b on a.user_id = b.user_id inner join MST_JOB c on b.job_id = c.job_id inner join MST_DEPARTMENT d on b.dept_id = d.dept_id where comment is not NULL';
     return new Promise((resolve, reject) => {
       connection.query(sql, (error, result) => {
         if (error) {
@@ -180,7 +180,9 @@ module.exports = {
           return;
         }
         console.log('##Edit Report Success##');
-        console.log(`result = ${result}`);
+        for(const key in result) {
+          console.log(`${key}: ${result[key]}`)
+        }
         resolve(result);
       })
     });

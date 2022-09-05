@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: 'db',
   user: 'root',
   password: 'root',
-  database: 'report_db'
+  database: 'report_db',
 });
 
 // bcryptの設定
@@ -41,7 +41,7 @@ module.exports = {
     });
   },
   async selectUserById (userId) {
-    console.log('selectUser working')
+    console.log('selectUserById working')
     const sql = 'select * from USER where user_id = ?';
     const params = [userId];
     console.log(`params = ${params}`);
