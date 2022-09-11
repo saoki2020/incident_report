@@ -42,7 +42,7 @@ const routes = [
     path: '/Statistics',
     name: 'Statistics',
     component: () => import(/* webpackChunkName: "Statistics" */ '../views/Statistics.vue'),
-    meta: {requiresAuth: true}
+    // meta: {requiresAuth: true}
   },
   {
     path: '/ChiefPage',

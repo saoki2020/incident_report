@@ -84,4 +84,64 @@ module.exports = {
       return res.status(422).json(error);
     }
   },
+  async getCountScene(req, res) {
+    try {
+      console.log("###getCountScene###");
+      const reports = await reportsModel.selectCountScene(req, res);
+      return res.json(reports);
+    } catch (error) {
+      console.log("###getCountScene ERROR###");
+      return res.status(422).json(error);
+    }
+  },
+  async getCountContent(req, res) {
+    try {
+      console.log("###getCountContent###");
+      const reports = await reportsModel.selectCountContent(req, res);
+      return res.json(reports);
+    } catch (error) {
+      console.log("###getCountContent ERROR###");
+      return res.status(422).json(error);
+    }
+  },
+  async getCountDetail(req, res) {
+    try {
+      console.log("###getCountDetail###");
+      const reports = await reportsModel.selectCountDetail(req, res);
+      return res.json(reports);
+    } catch (error) {
+      console.log("###getCountDetail ERROR###");
+      return res.status(422).json(error);
+    }
+  },
+  async getCountMistake(req, res) {
+    try {
+      console.log("###getCountMistake###");
+      const reports = await reportsModel.selectCountMistake(req, res);
+      return res.json(reports);
+    } catch (error) {
+      console.log("###getCountMistake ERROR###");
+      return res.status(422).json(error);
+    }
+  },
+  async getCountReport(req, res) {
+    try {
+      console.log("###getCountReport###");
+      const reports = await reportsModel.selectCountReport(req, res);
+      return res.json(reports);
+    } catch (error) {
+      console.log("###getCountReport ERROR###");
+      return res.status(422).json(error);
+    }
+  },
+  async getCountDept(req, res) {
+    try {
+      console.log("###getCountDept###");
+      const reports = await reportsModel.selectCountDept(req, res);
+      return res.json(reports);
+    } catch (error) {
+      console.log("###getCountDept ERROR###");
+      return res.status(422).json(error);
+    }
+  },
 }

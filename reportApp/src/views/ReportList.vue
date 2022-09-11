@@ -261,7 +261,7 @@ export default {
       if (this.selectedYear!="全期間") {
         if (this.selectedMonth!="全期間"){
           return this.getReport.filter((value) => {
-            return new Date(value.report_datetime).getFullYear() == this.selectedYear && new Date(value.report_datetime).getMonth()+1 == this.selectedMonth()
+            return new Date(value.report_datetime).getFullYear() == this.selectedYear && new Date(value.report_datetime).getMonth()+1 == this.selectedMonth
         })
         } else {
           return this.getReport.filter((value) => {

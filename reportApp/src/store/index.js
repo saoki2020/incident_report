@@ -24,6 +24,8 @@ export default new Vuex.Store({
     token: '',
     userInfo: '',
     report: [],
+    itemCount: '',
+    chartData: '',
   },
   getters: {
     getJobs: state => state.jobs,
@@ -44,6 +46,8 @@ export default new Vuex.Store({
     getToken: state => state.token,
     getUserInfo: state => state.userInfo,
     getReport: state => state.report,
+    getItemCount: state => state.itemCount,
+    getChartData: state => state.chartData,
   },
   mutations: {
     setJobs: (state, value) => state.jobs = value,
@@ -70,6 +74,8 @@ export default new Vuex.Store({
       localStorage.removeItem('accessToken')
     },
     setReport: (state, value) => state.report = value,
+    setItemCount: (state, value) => state.itemCount = value,
+    setChartData: (state, value) => state.chartData = value,
   },
   actions: {
     // モーダルウインドウの操作
@@ -248,6 +254,86 @@ export default new Vuex.Store({
         commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
         console.log("axiosEditReport Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosCountReport({commit}, year) {
+      try {
+        console.log('axiosCountReport working')
+        console.log(`year= ${year}`)
+        const res = await axios.get("http://localhost:3000/report/countReport", {params: {selectedYear: year}})
+        console.log(Object.values(res.data[0]))
+        commit('setChartData', Object.values(res.data[0]))
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosCountReport Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosCountScene({commit}, year) {
+      try {
+        console.log('axiosCountScene working')
+        const res = await axios.get("http://localhost:3000/report/countScene", {params: {selectedYear: year}})
+        commit('setItemCount', res.data)
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosCountScene Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosCountContent({commit}, year) {
+      try {
+        console.log('axiosCountContent working')
+        const res = await axios.get("http://localhost:3000/report/countContent", {params: {selectedYear: year}})
+        commit('setItemCount', res.data)
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosCountContent Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosCountDetail({commit}, year) {
+      try {
+        console.log('axiosCountDetail working')
+        const res = await axios.get("http://localhost:3000/report/countDetail", {params: {selectedYear: year}})
+        commit('setItemCount', res.data)
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosCountDetail Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosCountMistake({commit}, year) {
+      try {
+        console.log('axiosCountMistake working')
+        const res = await axios.get("http://localhost:3000/report/countMistake", {params: {selectedYear: year}})
+        commit('setItemCount', res.data)
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosCountMistake Error")
+        commit('setError', error.response.data)
+        commit('setPostStatus', 'ERROR')
+        throw error
+      }
+    },
+    async axiosCountDept({commit}, year) {
+      try {
+        console.log('axiosCountDept working')
+        const res = await axios.get("http://localhost:3000/report/countDept", {params: {selectedYear: year}})
+        commit('setItemCount', res.data)
+        commit('setPostStatus', 'REPORT SUCCESS')
+      } catch (error) {
+        console.log("axiosCountDept Error")
         commit('setError', error.response.data)
         commit('setPostStatus', 'ERROR')
         throw error
