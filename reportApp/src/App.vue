@@ -29,10 +29,9 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'App',
-  data: () => ({
-  }),
   computed: {
     ...mapGetters(['getUserInfo']),
   },
@@ -51,12 +50,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-  /* .cell_border {
-    border-style: solid;
-    border-width: thin;
-    border-color: #00D8D8;
-  } */
-
-</style>

@@ -22,11 +22,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "SignIn" */ '../views/SignIn.vue')
   },
   {
-    path: '/Result',
-    name: 'Result',
-    component: () => import(/* webpackChunkName: "Result" */ '../views/Result.vue')
-  },
-  {
     path: '/ReportList',
     name: 'ReportList',
     component: () => import(/* webpackChunkName: "ReportList" */ '../views/ReportList.vue'),
@@ -42,7 +37,7 @@ const routes = [
     path: '/Statistics',
     name: 'Statistics',
     component: () => import(/* webpackChunkName: "Statistics" */ '../views/Statistics.vue'),
-    // meta: {requiresAuth: true}
+    meta: {requiresAuth: true}
   },
   {
     path: '/ChiefPage',
@@ -61,7 +56,6 @@ const routes = [
     name: 'ErrorPage',
     props: true,
     component: () => import(/* webpackChunkName: "ErrorPage" */ '../views/ErrorPage.vue'),
-    // meta: {requiresAuth: true}
   },
 ]
 
@@ -98,20 +92,5 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
-
-
-// axios.getでユーザー情報が取ってこれれば遷移できる
-// router.beforeEach(async (to, from, next) => {
-//   if (to.meta.requiresAuth) {
-//     try {
-//       await axios.get('http://localhost:3000/user');
-//       next();
-//     } catch (error) {
-//       next('login');
-//     }
-//   } else {
-//     next();
-//   }
-// });
 
 export default router

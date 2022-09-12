@@ -2,7 +2,6 @@
 <v-app>
   <div class="modal">
     <div class="modal_box">
-      {{newValue}}
       <v-form ref="formValid">
         <v-text-field
           v-if="reportData.itemName=='incident_datetime'"
@@ -267,10 +266,6 @@ export default {
       this.editData.reportNo = this.reportData.reportNo
       this.editData.itemName = this.reportData.itemName
       this.editData.itemValue = this.newValue
-      console.log('setEditData working')
-      console.log(`editData.reportNo = ${this.editData.reportNo}`)
-      console.log(`editData.itemName = ${this.editData.itemName}`)
-      console.log(`editData.itemValue = ${this.editData.itemValue}`)
     }
   },
   created() {

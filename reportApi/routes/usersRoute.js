@@ -11,6 +11,4 @@ module.exports = [
   router.post('/user/authentication', authenticationValidator, usersController.authenticateUser),
   router.get('/user',verifyToken, usersController.getUser),
   router.get('/user/reporter', usersController.getUserById),
-  router.get('/mail', usersController.testMail)
-
 ]

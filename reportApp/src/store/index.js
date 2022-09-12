@@ -88,7 +88,7 @@ export default new Vuex.Store({
     toggleEditWindow({commit}, payload) {
       commit('setEditWindowStatus', payload)
     },
-    // APIの操作
+    // マスターデータの取得
     async axiosGetJobs({commit}) {
       const res =  await axios.get("http://localhost:3000/masters/jobs")
       commit('setJobs', res.data)
@@ -121,249 +121,187 @@ export default new Vuex.Store({
       const res =  await axios.get("http://localhost:3000/masters/clinicalDepts")
       commit('setClinicalDepts', res.data)
     },
+    // 新規登録
     async axiosPostRegistration({commit}, {name, email, password, job, department, isChief}) {
       try {
         const res = await axios.post("http://localhost:3000/user/registration", {name, email, password, job, department, isChief})
         commit('setResult', res.data)
         commit('setPostStatus', 'REGISTRATION SUCCESS')
       } catch (error) {
-        const errorData = error.response.data
-        // バリデーションエラーの場合
-        if (errorData.errors) {
-          commit('setError', errorData.errors)
-          console.log(errorData.errors)
+        if (!error.response) {
+          // レスポンスが無い場合
+          commit('setError', 'レスポンスがありません')
+        } else if (error.response.data.errors) {
+          // バリデーションエラーの場合
+          commit('setError', error.response.data.errors)
         } else {
         // SQLのエラーの場合
-          commit('setError', errorData)
-          console.log(errorData);
+          commit('setError', error.response.data)
         }
         commit('setPostStatus', 'ERROR')
-        // console.log(`error.response.data = ${errors}`)
-        // Object.keys(errors).forEach(
-        //   key =>  console.log(`${key}:${errors[key]}`));
       }
     },
+    // トークンを使って認証
     async axiosAuthentication({commit}, {email, password}) {
       try {
         const res = await axios.post("http://localhost:3000/user/authentication", {email, password})
         const token = res.data
-        console.log(`res.data = ${token}`)
+        // tokenをvuexとlocalStrageに保存
         commit('setToken', token)
         commit('setLocalStorageToken', token)
-        // tokenをヘッダーにセットする
+        // tokenをヘッダーにセット
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         // ユーザー情報を取得
         const resUser = await axios.get("http://localhost:3000/user")
-        console.log(`resUser.data = ${resUser.data}`)
-        console.dir(resUser.data)
         commit('setUserInfo', resUser.data);
       } catch (error) {
-        console.log('error on axiosAuthentication')
-        console.log(error.response.data)
-        commit('setError', error.response.data)
+        // ERR_EMPTY_RESPONSEの場合はerror.responseが無いので文字だけ表示
+        if(!error.response){
+          commit('setError', 'レスポンスがありません')
+        } else {
+          commit('setError', error.response.data)
+        }
         commit('setPostStatus', 'ERROR')
+        throw error
       }
     },
+    // サインアウト
     actionSignOut({commit}) {
       commit('clearAuth')
     },
+    // ユーザー情報の取得
     actionSetUserInfo({commit}, payload) {
       commit('setUserInfo', payload)
     },
+    // レポートの登録
     async axiosPostReport({commit, getters}, postData) {
-      // console.log("post report")
-      // console.log(postData)
       const postUser = getters.getUserInfo
-      // console.log(`postUser = ${postUser}`)
-      // console.dir(postUser)
       try {
-        const res = await axios.post("http://localhost:3000/report/postNewReport",{ postData, postUser})
+        await axios.post("http://localhost:3000/report/postNewReport",{ postData, postUser})
         commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosPostReport Error")
-        commit('setError', error.response.data)
+        if(!error.response){
+          commit('setError', 'レスポンスがありません')
+        } else {
+          commit('setError', error.response.data)
+        }
         commit('setPostStatus', 'ERROR')
       }
     },
+    // 役職者用レポート一覧の取得
     async axiosGetReportForChief({commit}) {
       try {
-        console.log('axiosGetReportForChief working')
         const res = await axios.get('http://localhost:3000/report/chief')
         commit('setReport', res.data)
       } catch (error) {
-        console.log('axiosGetReportForChief Error')
-        console.dir(error.response.data)
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
       }
     },
+    // コメント済みレポート一覧の取得
     async axiosGetCommentedReport({commit}) {
       try {
-        console.log('axiosGetCommented working')
         const res = await axios.get('http://localhost:3000/report/commented')
         commit('setReport', res.data)
       } catch (error) {
-        console.log('axiosGetCommentedReport Error')
-        console.dir(error.response.data)
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
       }
     },
+    // レポートの取得（コメント済み＆ログインユーザーのモノ）
     async axiosGetReport({commit, getters}) {
       try {
-        console.log('axiosGetReport with ID working')
         const res = await axios.get('http://localhost:3000/report', {params: {userId: getters.getUserInfo.user_id}})
         commit('setReport', res.data)
       } catch (error) {
-        console.log('axiosGetReport Error')
-        console.dir(error.response.data)
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
       }
     },
+    // コメントの登録
     async axiosPostComment({commit}, commentData) {
       try {
-        console.log(`axiosPostComment postData.reportNo = ${commentData.reportNo}}`)
-        console.log(`axiosPostComment postData.comment = ${commentData.comment}}`)
-        const res = await axios.post("http://localhost:3000/report/postComment", {commentData})
-        commit('setPostStatus', 'REPORT SUCCESS')
+        await axios.post("http://localhost:3000/report/postComment", {commentData})
       } catch (error) {
-        console.log("axiosPostComment Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // レポートの削除
     async axiosDeleteReport({commit}, reportNo) {
       try {
-        const res = await axios.post("http://localhost:3000/report/delete", {reportNo})
-        commit('setPostStatus', 'REPORT SUCCESS')
+        await axios.post("http://localhost:3000/report/delete", {reportNo})
       } catch (error) {
-        console.log("axiosDeleteReport Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // レポートの編集
     async axiosEditReport({commit}, editData) {
       try {
-        console.log('axiosEditReport working')
-        console.log(`editData.itemName = ${editData.itemName}`)
-        console.log(`editData.itemValue= ${editData.itemValue}`)
-        const res = await axios.post("http://localhost:3000/report/edit", {editData})
-        commit('setPostStatus', 'REPORT SUCCESS')
+        await axios.post("http://localhost:3000/report/edit", {editData})
       } catch (error) {
-        console.log("axiosEditReport Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // 毎月の総件数を取得
     async axiosCountReport({commit}, year) {
       try {
-        console.log('axiosCountReport working')
-        console.log(`year= ${year}`)
         const res = await axios.get("http://localhost:3000/report/countReport", {params: {selectedYear: year}})
-        console.log(Object.values(res.data[0]))
         commit('setChartData', Object.values(res.data[0]))
-        commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosCountReport Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // 発生場所ごとの毎月の件数を取得
     async axiosCountScene({commit}, year) {
       try {
-        console.log('axiosCountScene working')
         const res = await axios.get("http://localhost:3000/report/countScene", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
-        commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosCountScene Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // 内容ごとの毎月の件数を取得
     async axiosCountContent({commit}, year) {
       try {
-        console.log('axiosCountContent working')
         const res = await axios.get("http://localhost:3000/report/countContent", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
-        commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosCountContent Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // 詳細ごとの毎月の件数を取得
     async axiosCountDetail({commit}, year) {
       try {
-        console.log('axiosCountDetail working')
         const res = await axios.get("http://localhost:3000/report/countDetail", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
-        commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosCountDetail Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // 誤内容ごとの毎月の件数を取得
     async axiosCountMistake({commit}, year) {
       try {
-        console.log('axiosCountMistake working')
         const res = await axios.get("http://localhost:3000/report/countMistake", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
-        commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosCountMistake Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
+    // 部署ごとの毎月の件数を取得
     async axiosCountDept({commit}, year) {
       try {
-        console.log('axiosCountDept working')
         const res = await axios.get("http://localhost:3000/report/countDept", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
-        commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
-        console.log("axiosCountDept Error")
         commit('setError', error.response.data)
-        commit('setPostStatus', 'ERROR')
         throw error
       }
     },
-
-    // Promiseを使うバージョン
-    // async axiosAuthentication({commit}, {email, password}) {
-    //   await new Promise((resolve, reject) => {
-    //     axios.post("http://localhost:3000/user/authentication", {email, password})
-    //     .then(response => {
-    //       const token = response.data
-    //       commit('setToken', token)
-    //       // tokenをヘッダーにセットする
-    //       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    //       axios.get("http://localhost:3000/user")
-    //       .then(res => {
-
-    //       })
-    //       commit('setUser', response.data);
-    //       resolve(response)
-    //     }).catch(error => {
-    //       console.log('error on axiosAuthentication')
-    //       console.log(error.response.data)
-    //       commit('setError', error.response.data)
-    //       commit('setPostStatus', 'ERROR')
-    //       reject(error)
-    //     })
-    //   })
-    // },
   },
   modules: {
   }

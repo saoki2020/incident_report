@@ -34,28 +34,22 @@ export default {
     ...mapGetters(['getMessageWindowStatus','getReport'])
   },
   methods: {
-    ...mapActions(['toggleMessageWindow','axiosPostComment','axiosGetReportForChief']),
+    ...mapActions(['toggleMessageWindow','axiosPostComment','axiosGetReportForChief','axiosGetCommentedReport']),
     async postComment() {
-      console.log('postComment working')
       const commentData = {
         reportNo: this.reportNo,
         comment: this.inputComment
       }
       try {
         if (this.$refs.formValid.validate()) {
-          const res = await this.axiosPostComment(commentData)
+          await this.axiosPostComment(commentData)
+          // コメントを送信したら一覧を再取得
+          if (this.$router.currentRoute.path == '/ChiefPage') this.axiosGetReportForChief()
+          if (this.$router.currentRoute.path == '/ChiefCommented') this.axiosGetCommentedReport()
           this.toggleMessageWindow(false)
-          // location.reload()
-          // this.$router.go({path: this.$router.currentRoute.path, force: true})
-          // this.$router.push("/ChiefPage", ()=>{} )
-          // this.$router.back()
-          // this.$router.reload()
-          this.axiosGetReportForChief()
-          // this.$router.go(0)
         }
       } catch (error) {
         this.errorMessage = "コメントを登録できません"
-        console.log("コメントを登録できません")
       }
     },
     clearError() {

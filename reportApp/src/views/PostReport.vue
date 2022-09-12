@@ -49,17 +49,6 @@
           />
         </v-col>
       </v-row>
-      <!-- <v-row justify="center">
-        <v-col cols="1">
-          <v-btn v-if="1<formNum&&formNum<=5" color="teal" outlined @click="decreaseForm">戻る</v-btn>
-        </v-col>
-        <v-col cols="1">
-          <v-btn  v-if="formNum<4" class="teal lighten-2" dark @click="increaseForm">次へ</v-btn>
-        </v-col>
-        <v-col cols="1">
-          <v-btn  v-if="formNum===4" class="teal lighten-2" dark @click="increaseForm">提出する</v-btn>
-        </v-col>
-      </v-row> -->
     </v-container>
   </v-app>
 </template>
@@ -72,7 +61,6 @@ import ReportForm3 from './forms/ReportForm3.vue'
 import ReportForm4 from './forms/ReportForm4.vue'
 import ReportConfirm from './forms/ReportConfirm.vue'
 
-import { mapActions, mapGetters } from 'vuex'
 export default {
   name: "PostReport",
   components: {
@@ -127,7 +115,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>

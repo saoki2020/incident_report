@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   name: "DeleteWindow",
   props: [
@@ -41,7 +41,6 @@ export default {
   },
 }
 </script>
-
 
 <style scoped>
 * {

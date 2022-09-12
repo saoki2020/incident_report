@@ -6,6 +6,9 @@
     </v-container>
     <v-container v-if="getScenes.length&&getContents.length&&getDetails.length&&getMistakes.length&&getDests.length&&getClinicalDepts.length">
       <v-row justify="center">
+        <h1>コメント登録済み</h1>
+      </v-row>
+      <v-row justify="center">
         <v-col cols="2">
           <v-select :items="year" label="年" v-model="selectedYear"/>
         </v-col>
@@ -103,7 +106,6 @@ export default {
   methods: {
     ...mapActions(["axiosGetCommentedReport","axiosGetScenes","axiosGetContents","axiosGetDetails","axiosGetMistakes","axiosGetDests","toggleMessageWindow","axiosGetClinicalDepts","axiosGetJobs","axiosGetDepts"]),
     openWindow(value) {
-      console.log(`report_no = value = ${value}`)
       this.reportNo = value
       this.toggleMessageWindow(true)
     },

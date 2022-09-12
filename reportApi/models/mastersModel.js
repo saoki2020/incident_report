@@ -1,7 +1,7 @@
 // DBの接続設定
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
-  host: 'db',
+  host: 'db_container',
   user: 'root',
   password: 'root',
   database: 'report_db',

@@ -74,15 +74,9 @@ export default {
           this.$router.push('/ReportList')
         }
       } catch (error) {
-        console.log('error on Signin')
-        console.log(error)
         this.toggleMessageWindow(true)
       }
     },
   },
 }
 </script>
-
-<style scoped>
-
-</style>

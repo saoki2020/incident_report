@@ -87,8 +87,8 @@ export default {
   },
   methods: {
     ...mapActions(['axiosGetJobs','axiosGetDepts',"axiosGetClinicalDepts", "axiosGetScenes", "axiosGetContents", "axiosGetDetails", "axiosGetMistakes", "axiosGetDests", "axiosPostReport", 'toggleMessageWindow']),
-    onSubmit() {
-      this.axiosPostReport(this.postData)
+    async onSubmit() {
+      await this.axiosPostReport(this.postData)
       this.toggleMessageWindow(true)
     },
     decreaseForm() {

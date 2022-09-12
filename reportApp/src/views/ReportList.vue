@@ -234,7 +234,6 @@ export default {
   methods: {
     ...mapActions(["axiosGetReport","axiosGetScenes","axiosGetContents","axiosGetDetails","axiosGetMistakes","axiosGetDests","toggleDeleteWindow","toggleEditWindow","axiosGetClinicalDepts"]),
     reportDelete(value) {
-      console.log(`report_no = value = ${value}`)
       this.reportNo = value
       this.toggleDeleteWindow(true)
     },

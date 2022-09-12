@@ -1,22 +1,20 @@
 // DBの接続設定
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
-  host: 'db',
+  host: 'db_container',
   user: 'root',
   password: 'root',
   database: 'report_db',
 });
 
 module.exports = {
-  // DBにレポート情報を保存する
+  // レポートを保存
   async insertReport (req, res) {
-    console.log('insertReport working')
+    // 経験年数を月数に変換し、経験月数と加算する
     const experience = Number(req.body.postData.workYear) * 12 + Number(req.body.postData.workMonth);
-    console.log(`experience = ${experience}`);
+    // DateとTimeを結合し、Datetime型に変換する
     const incidentDatetime = req.body.postData.incidentDate + ' ' + req.body.postData.incidentTime;
-    console.log(`incidentDatetime =${incidentDatetime}`);
     const reportDatetime = req.body.postData.reportDate + ' ' + req.body.postData.reportTime;
-    console.log(`reportDatetime=${reportDatetime}`);
     const sql = "INSERT INTO REPORT (user_id, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     const params = [
       req.body.postUser.user_id,
@@ -44,150 +42,77 @@ module.exports = {
     ];
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('####error on InsertReport##');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on InsertReport##');
-        console.log(`result = ${result}`);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
     });
   },
+  // コメントのないレポートを取得
   async selectNoCommentReport (req, res) {
-    console.log('selectNoCommentReport working')
     const sql = 'select report_no, a.user_id, b.name, c.job_name, d.dept_name, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention, comment from REPORT a inner join USER b on a.user_id = b.user_id inner join MST_JOB c on b.job_id = c.job_id inner join MST_DEPARTMENT d on b.dept_id = d.dept_id where comment is NULL';
     return new Promise((resolve, reject) => {
       connection.query(sql, (error, result) => {
-        if (error) {
-          console.log('###error on selectNoCommentREPORT###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectNoCommentREPORT##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // コメント済みのレポートを取得
   async selectCommentedReport (req, res) {
-    console.log('selectCommentedReport working')
     const sql = 'select report_no, a.user_id, b.name, c.job_name, d.dept_name, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention, comment from REPORT a inner join USER b on a.user_id = b.user_id inner join MST_JOB c on b.job_id = c.job_id inner join MST_DEPARTMENT d on b.dept_id = d.dept_id where comment is not NULL';
     return new Promise((resolve, reject) => {
       connection.query(sql, (error, result) => {
-        if (error) {
-          console.log('###error on selectCommentedREPORT###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCommentedREPORT##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // user_idを指定してレポートを取得
   async selectReportById (req, res) {
-    console.log('selectReportById working');
-    console.dir(req.query);
-    console.log(`req.params.userId = ${req.query.userId}`);
     const sql = 'select * from REPORT where user_id = ? or comment is not NULL';
     const params = [req.query.userId];
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectREPORT###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectREPORT##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // コメントを更新
   async updateComment(req, res) {
-    console.log('updateComment working');
     const sql = "update REPORT set comment = ? where report_no = ?";
     const params = [req.body.commentData.comment, req.body.commentData.reportNo];
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('####error on InsertComment##');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on InserComment##');
-        console.log(`result = ${result}`);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
     });
   },
+  // レポートを削除
   async deleteReport(req, res) {
     const sql = "delete from REPORT where report_no = ?";
     const params = [req.body.reportNo];
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
     });
   },
+  // レポートを更新
   async updateReport(req, res) {
-    console.log('updateReport working');
-    console.log(`req.body.editData.itemName = ${req.body.editData.itemName}`)
     const sql = "update REPORT set ?? = ? where report_no = ?";
     const params = [req.body.editData.itemName, req.body.editData.itemValue, req.body.editData.reportNo];
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('####Edit Report Error##');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##Edit Report Success##');
-        for(const key in result) {
-          console.log(`${key}: ${result[key]}`)
-        }
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
     });
   },
+  // 発生場所ごとの毎月の件数を取得
   async selectCountScene(req, res) {
-    console.log('selectCountScene working')
     const sql = `
     with
     params as (select ? as select_year)
@@ -229,25 +154,13 @@ module.exports = {
     const params = [req.query.selectedYear]
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectCountScene###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCountScene##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // 内容ごとの毎月の件数を取得
   async selectCountContent(req, res) {
-    console.log('selectCountContent working')
     const sql = `
     with
     params as (select ? as select_year)
@@ -289,25 +202,13 @@ module.exports = {
     const params = [req.query.selectedYear]
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectCountContent###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCountContent##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // 詳細ごとの毎月の件数を取得
   async selectCountDetail(req, res) {
-    console.log('selectCountDetail working')
     const sql = `
     with
     params as (select ? as select_year)
@@ -349,25 +250,13 @@ module.exports = {
     const params = [req.query.selectedYear]
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectCountDetail###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCountDetail##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // 誤内容ごとの毎月の件数を取得
   async selectCountMistake(req, res) {
-    console.log('selectCountMistake working')
     const sql = `
     with
     params as (select ? as select_year)
@@ -409,25 +298,13 @@ module.exports = {
     const params = [req.query.selectedYear]
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectCountMistake###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCountMistake##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // 月ごとの総件数を取得
   async selectCountReport(req, res) {
-    console.log('selectCountReport working')
     const sql = `
     select
     count(case when month(report_datetime) = 1 then 1 else null end) as 'Jan',
@@ -448,25 +325,13 @@ module.exports = {
     const params = [req.query.selectedYear]
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectCountReport###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCountReport##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
+  // 部署ごとの毎月の件数を取得
   async selectCountDept(req, res) {
-    console.log('selectCountDept working')
     const sql = `
     with
     params as (select ? as select_year)
@@ -493,21 +358,9 @@ module.exports = {
     const params = [req.query.selectedYear]
     return new Promise((resolve, reject) => {
       connection.query(sql, params, (error, result) => {
-        if (error) {
-          console.log('###error on selectCountDept###');
-          console.log(typeof(error));
-          for(const key in error) {
-            console.log(`${key}: ${error[key]}`)
-          }
-          reject(error);
-          return;
-        }
-        console.log('##success on selectCountDept##');
-        console.log(`result[0] = ${result[0]}`);
-        console.log(`result = ${result}`);
-        console.dir(result);
-        resolve(result);
+        if (error) return reject(error);
+        return resolve(result);
       })
-    })
+    });
   },
 }

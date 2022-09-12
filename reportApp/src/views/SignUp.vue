@@ -82,9 +82,9 @@ export default {
     ...mapGetters(['getJobs','getDepts', 'getMessageWindowStatus']),
   },
   methods: {
-    ...mapActions(['axiosGetJobs','axiosGetDepts','axiosPostRegistration','toggleMessageWindow']),
-    onSubmit() {
-      this.axiosPostRegistration({
+    ...mapActions(['axiosGetJobs','axiosGetDepts','axiosPostRegistration','toggleMessageWindow','actionSetError']),
+    async onSubmit() {
+      await this.axiosPostRegistration({
         name: this.name,
         email: this.email,
         password: this.password,
@@ -101,7 +101,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

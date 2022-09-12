@@ -89,8 +89,7 @@ export default {
     "date",
     "doctor",
     "formNum"
-  ]
-  ,
+  ],
   data() {
     return {
       required: value => !!value || "必須項目です",

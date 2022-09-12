@@ -6,6 +6,9 @@
     </v-container>
     <v-container v-if="getScenes.length&&getContents.length&&getDetails.length&&getMistakes.length&&getDests.length&&getClinicalDepts.length">
       <v-row justify="center">
+        <h1>コメント未登録</h1>
+      </v-row>
+      <v-row justify="center">
         <v-col cols="2">
           <v-select :items="year" label="年" v-model="selectedYear"/>
         </v-col>
@@ -71,6 +74,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import CommentWindow from '../components/CommentWindow.vue'
+
 export default {
   name: "ChiefPage",
   components: {
@@ -108,7 +112,6 @@ export default {
   methods: {
     ...mapActions(["axiosGetReportForChief","axiosGetScenes","axiosGetContents","axiosGetDetails","axiosGetMistakes","axiosGetDests","toggleMessageWindow","axiosGetClinicalDepts","axiosGetJobs","axiosGetDepts"]),
     openWindow(value) {
-      console.log(`report_no = value = ${value}`)
       this.reportNo = value
       this.toggleMessageWindow(true)
     },

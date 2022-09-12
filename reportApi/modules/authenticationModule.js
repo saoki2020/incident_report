@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-// 暗号化につかうキー
+// 暗号化キー
 const secretkey = 'secret_key';
 
 module.exports = {
@@ -14,7 +14,6 @@ module.exports = {
 
   //tokenの有無、有効かどうかを調べ、ユーザ情報を渡す
   verifyToken(req, res, next) {
-    console.log('verifyToken working');
     const bearToken = req.headers.authorization;
     const bearer = bearToken.split(' ');
     const token = bearer[1];
@@ -22,7 +21,6 @@ module.exports = {
     jwt.verify(token, secretkey, (error, user) => {
       if (error) return res.status(401).json('アクセストークンが有効ではありません');
       req.user = user;
-      console.log(`req.user = ${req.user}`);
       next();
     })
   }

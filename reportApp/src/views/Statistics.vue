@@ -132,6 +132,7 @@ export default {
     }
   },
   watch: {
+    // 選択した年が変化したら件数を取得しなおす
     selectedYear: async function(value) {
       this.loaded = false
       try{

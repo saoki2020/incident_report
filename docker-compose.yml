@@ -6,8 +6,8 @@ services:
       context: ./docker/db
     container_name: db_container
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       TZ: Asia/Tokyo
@@ -17,6 +17,12 @@ services:
       - ./reportApiDb/sql:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
+    healthcheck:
+      test: "mysql --password=${MYSQL_ROOT_PASSWORD} --execute 'show databases;'"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     command: mysqld
 
   api:
@@ -31,6 +37,12 @@ services:
     volumes:
       - ./reportApi:/api
     working_dir: /api
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c 'npm install &&
+      npm start'
 
   app:
     container_name: app_container
@@ -43,6 +55,7 @@ services:
     tty: true
     environment:
       TZ: Asia/Tokyo
+    command: yarn serve
 
   mailcatcher:
     image: schickling/mailcatcher

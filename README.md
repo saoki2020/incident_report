@@ -1,30 +1,29 @@
-#Vue.js + Node.js(Express) + MySQLの環境構築
-1.作業用フォルダにdocker-compose.ymlをコピーする
+# インシデント報告アプリ動作確認手順
 
-2.DBの設定を変更する
-docker-compose.ymlの以下の部分を任意に変更する
-  container_name: api_container
-  MYSQL_ROOT_PASSWORD: root
-  MYSQL_DATABASE: report_db
-  MYSQL_USER: test_user
-  MYSQL_PASSWORD: pass
+## リポジトリをクローンする
+git clone git@github.com:saoki2020/incident_report.git
 
-3.プロジェクトを作成する
-npx express-generator --view=ejs reportApi
+## DBの環境設定を行う
+### リポジトリのルートに.envを作成して以下をコピーし、任意の値を設定する
+${MYSQL_DATABASE}=report_db
+${MYSQL_ROOT_PASSWORD}='任意の値'
+${MYSQL_USER}='任意の値'
+${MYSQL_PASSWORD}='任意の値'
 
-4.dockerコンテナを起動する
+## dockerコンテナを起動する
 docker-compose up -d
 
-5.Expressの動作を確認する
-localhost:3000にアクセスできるか
+## アプリにアクセスする
+localhost:8080
 
-6.MYSQLの動作を確認する
-・mysqlのコンテナに入る
-docker exec -it <コンテナ名> bash
+## ユーザーを新規登録する
+sample.sqlをインポートする前にユーザーを3人分作成する
 
-・mysqlにログインする
-mysql -u <ユーザー名> -p
-enter:<ユーザーパスワード>
+### 確認メールにはmailcatcherを使用しています
+localhost:1080
+にアクセスし、受信したメールを確認してください
 
-・データベースを確認する
-show databases;
+## サンプルデータの挿入
+docker cp ./sample.sql db_container:/tmp/sample.sql
+docker exec -it db_container bash
+mysql -u root -p report_db < tmp/sample.sql
