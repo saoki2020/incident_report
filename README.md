@@ -5,10 +5,10 @@ git clone git@github.com:saoki2020/incident_report.git
 
 ## DBの環境設定を行う
 ### リポジトリのルートに.envを作成して以下をコピーし、任意の値を設定する
-${MYSQL_DATABASE}=report_db
-${MYSQL_ROOT_PASSWORD}='任意の値'
-${MYSQL_USER}='任意の値'
-${MYSQL_PASSWORD}='任意の値'
+MYSQL_DATABASE=report_db
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_ROOT_PASSWORD=
 
 ## dockerコンテナを起動する
 docker-compose up -d
