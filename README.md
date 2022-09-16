@@ -13,6 +13,10 @@ MYSQL_ROOT_PASSWORD=
 ## dockerコンテナを起動する
 docker-compose up -d
 
+## APPコンテナに入って依存関係をインストール
+docker exec -it app_container bash  
+yarn install
+
 ## アプリにアクセスする
 localhost:8080
 
