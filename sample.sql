@@ -1,3 +1,9 @@
+INSERT INTO USER (user_id, name, email, password, job_id, dept_id, isChief, isRegistration) VALUES (1, 'test1', 'test1@test.com', '$2b$10$Ug7624l8lA77VAj/YZo3HuqFyJp5834IWNyvRStSBcYjkruY59/Si', 1, 2, 1, 1);
+
+INSERT INTO USER (user_id, name, email, password, job_id, dept_id, isChief, isRegistration) VALUES (2, 'test2', 'test2@test.com', '$2b$10$INWkUd/9hGS6zH9v8Np5UuUYMP1.tnhKWofiPrnxkXqpUYgKYa22G', 4, 5, 1, 1);
+
+INSERT INTO USER (user_id, name, email, password, job_id, dept_id, isChief, isRegistration) VALUES (3, 'test3', 'test3@test.com', '$2b$10$CgJlB2mWdIkzWJMtgVbALukgWMoOXuZgkiWVuMb.psYOdkX/tClrS', 3, 6, 1, 1);
+
 INSERT INTO REPORT (user_id, experience, patient_name, patient_age, patient_gender, clinical_dept_id, disease, hospital_date, doctor, incident_datetime, scene_id, content_id, detail_id, mistake_id, report_datetime, dest_id, risk, lose_trust, situation, response, factor, prevention)
 VALUES (1,25,'患者太郎',99,'Male',1,'イレウス','2021-01-01','医者１','2020-01-01 12:00:00',1,1,1,1,'2020-01-01',1,1,1,'インシデント発生時の状況を説明','その場で行った対応を説明','原因を分析','対応策を考える');
 

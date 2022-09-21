@@ -29,7 +29,7 @@ module.exports = {
       .digest('hex');
       confirmUrl += '&signature=' + signature;
       // メールを送信
-      emailRule.sendConfirmMail(confirmUrl);
+      emailRule.sendConfirmMail(confirmUrl,req.body.email);
       return res.json(result);
     } catch (error) {
       return res.status(422).json(error);

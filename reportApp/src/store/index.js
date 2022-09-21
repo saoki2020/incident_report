@@ -4,6 +4,9 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
+// デフォルトURLを設定(開発ならlocalhost,本番ならドメイン名)
+axios.defaults.baseURL = process.env.VUE_APP_ROOT_API
+
 export default new Vuex.Store({
   state: {
     jobs: [],
@@ -90,41 +93,41 @@ export default new Vuex.Store({
     },
     // マスターデータの取得
     async axiosGetJobs({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/jobs")
+      const res =  await axios.get("/masters/jobs")
       commit('setJobs', res.data)
     },
     async axiosGetDepts({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/departments")
+      const res =  await axios.get("/masters/departments")
       commit('setDepts', res.data)
     },
     async axiosGetScenes({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/scenes")
+      const res =  await axios.get("/masters/scenes")
       commit('setScenes', res.data)
     },
     async axiosGetContents({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/contents")
+      const res =  await axios.get("/masters/contents")
       commit('setContents', res.data)
     },
     async axiosGetDetails({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/details")
+      const res =  await axios.get("/masters/details")
       commit('setDetails', res.data)
     },
     async axiosGetMistakes({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/mistakes")
+      const res =  await axios.get("/masters/mistakes")
       commit('setMistakes', res.data)
     },
     async axiosGetDests({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/dests")
+      const res =  await axios.get("/masters/dests")
       commit('setDests', res.data)
     },
     async axiosGetClinicalDepts({commit}) {
-      const res =  await axios.get("http://localhost:3000/masters/clinicalDepts")
+      const res =  await axios.get("/masters/clinicalDepts")
       commit('setClinicalDepts', res.data)
     },
     // 新規登録
     async axiosPostRegistration({commit}, {name, email, password, job, department, isChief}) {
       try {
-        const res = await axios.post("http://localhost:3000/user/registration", {name, email, password, job, department, isChief})
+        const res = await axios.post("/user/registration", {name, email, password, job, department, isChief})
         commit('setResult', res.data)
         commit('setPostStatus', 'REGISTRATION SUCCESS')
       } catch (error) {
@@ -144,7 +147,7 @@ export default new Vuex.Store({
     // トークンを使って認証
     async axiosAuthentication({commit}, {email, password}) {
       try {
-        const res = await axios.post("http://localhost:3000/user/authentication", {email, password})
+        const res = await axios.post("/user/authentication", {email, password})
         const token = res.data
         // tokenをvuexとlocalStrageに保存
         commit('setToken', token)
@@ -152,7 +155,7 @@ export default new Vuex.Store({
         // tokenをヘッダーにセット
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         // ユーザー情報を取得
-        const resUser = await axios.get("http://localhost:3000/user")
+        const resUser = await axios.get("/user")
         commit('setUserInfo', resUser.data);
       } catch (error) {
         // ERR_EMPTY_RESPONSEの場合はerror.responseが無いので文字だけ表示
@@ -177,7 +180,7 @@ export default new Vuex.Store({
     async axiosPostReport({commit, getters}, postData) {
       const postUser = getters.getUserInfo
       try {
-        await axios.post("http://localhost:3000/report/postNewReport",{ postData, postUser})
+        await axios.post("/report/postNewReport",{ postData, postUser})
         commit('setPostStatus', 'REPORT SUCCESS')
       } catch (error) {
         if(!error.response){
@@ -191,7 +194,7 @@ export default new Vuex.Store({
     // 役職者用レポート一覧の取得
     async axiosGetReportForChief({commit}) {
       try {
-        const res = await axios.get('http://localhost:3000/report/chief')
+        const res = await axios.get('/report/chief')
         commit('setReport', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -200,7 +203,7 @@ export default new Vuex.Store({
     // コメント済みレポート一覧の取得
     async axiosGetCommentedReport({commit}) {
       try {
-        const res = await axios.get('http://localhost:3000/report/commented')
+        const res = await axios.get('/report/commented')
         commit('setReport', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -209,7 +212,7 @@ export default new Vuex.Store({
     // レポートの取得（コメント済み＆ログインユーザーのモノ）
     async axiosGetReport({commit, getters}) {
       try {
-        const res = await axios.get('http://localhost:3000/report', {params: {userId: getters.getUserInfo.user_id}})
+        const res = await axios.get('/report', {params: {userId: getters.getUserInfo.user_id}})
         commit('setReport', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -218,7 +221,7 @@ export default new Vuex.Store({
     // コメントの登録
     async axiosPostComment({commit}, commentData) {
       try {
-        await axios.post("http://localhost:3000/report/postComment", {commentData})
+        await axios.post("/report/postComment", {commentData})
       } catch (error) {
         commit('setError', error.response.data)
         throw error
@@ -227,7 +230,7 @@ export default new Vuex.Store({
     // レポートの削除
     async axiosDeleteReport({commit}, reportNo) {
       try {
-        await axios.post("http://localhost:3000/report/delete", {reportNo})
+        await axios.post("/report/delete", {reportNo})
       } catch (error) {
         commit('setError', error.response.data)
         throw error
@@ -236,7 +239,7 @@ export default new Vuex.Store({
     // レポートの編集
     async axiosEditReport({commit}, editData) {
       try {
-        await axios.post("http://localhost:3000/report/edit", {editData})
+        await axios.post("/report/edit", {editData})
       } catch (error) {
         commit('setError', error.response.data)
         throw error
@@ -245,7 +248,7 @@ export default new Vuex.Store({
     // 毎月の総件数を取得
     async axiosCountReport({commit}, year) {
       try {
-        const res = await axios.get("http://localhost:3000/report/countReport", {params: {selectedYear: year}})
+        const res = await axios.get("/report/countReport", {params: {selectedYear: year}})
         commit('setChartData', Object.values(res.data[0]))
       } catch (error) {
         commit('setError', error.response.data)
@@ -255,7 +258,7 @@ export default new Vuex.Store({
     // 発生場所ごとの毎月の件数を取得
     async axiosCountScene({commit}, year) {
       try {
-        const res = await axios.get("http://localhost:3000/report/countScene", {params: {selectedYear: year}})
+        const res = await axios.get("/report/countScene", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -265,7 +268,7 @@ export default new Vuex.Store({
     // 内容ごとの毎月の件数を取得
     async axiosCountContent({commit}, year) {
       try {
-        const res = await axios.get("http://localhost:3000/report/countContent", {params: {selectedYear: year}})
+        const res = await axios.get("/report/countContent", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -275,7 +278,7 @@ export default new Vuex.Store({
     // 詳細ごとの毎月の件数を取得
     async axiosCountDetail({commit}, year) {
       try {
-        const res = await axios.get("http://localhost:3000/report/countDetail", {params: {selectedYear: year}})
+        const res = await axios.get("/report/countDetail", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -285,7 +288,7 @@ export default new Vuex.Store({
     // 誤内容ごとの毎月の件数を取得
     async axiosCountMistake({commit}, year) {
       try {
-        const res = await axios.get("http://localhost:3000/report/countMistake", {params: {selectedYear: year}})
+        const res = await axios.get("/report/countMistake", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
       } catch (error) {
         commit('setError', error.response.data)
@@ -295,7 +298,7 @@ export default new Vuex.Store({
     // 部署ごとの毎月の件数を取得
     async axiosCountDept({commit}, year) {
       try {
-        const res = await axios.get("http://localhost:3000/report/countDept", {params: {selectedYear: year}})
+        const res = await axios.get("/report/countDept", {params: {selectedYear: year}})
         commit('setItemCount', res.data)
       } catch (error) {
         commit('setError', error.response.data)
